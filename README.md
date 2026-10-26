@@ -93,7 +93,13 @@ Embedded control center with **380+ commands** categorized across 16 tabs:
 
 ---
 
-## 📥 Installation & Quick Start
+## 📥 Installation & Download
+
+### 🚀 Direct Download (No Python Required)
+You can directly download the ready-to-use Windows `.exe` from our GitHub Releases:
+👉 **[Download Latest Auto-Minecraft-Server-Maker.exe](https://github.com/toprakahmetaydogmus/auto-minecraft-server-maker/releases/latest)**
+
+---
 
 ### Option A: Run from Source (Python 3.9+)
 
@@ -109,7 +115,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-### Option B: Build Windows Standalone `.exe`
+### Option B: Build Windows Standalone `.exe` Locally
 
 ```bash
 # Run the 1-click compiler
@@ -122,18 +128,20 @@ build_exe.bat
 ## 🇹🇷 Türkçe Dokümantasyon
 
 ### Genel Bakış
-Auto Minecraft Server Maker, her Minecraft sürümü için (1.7.x - 1.21.x) tek tıkla otomatik sunucu kuran, 12 farklı yapay zekâ motoruyla (NVIDIA NIM, OpenRouter, OpenAI, Claude, Gemini, Groq, Mistral, Together, Perplexity, Cohere, DeepSeek, Ollama) sunucu çökmelerini ve log hatalarını anında teşhis eden, 380+ komutluk gelişmiş Master Admin Paneli içeren profesyonel bir sunucu yönetim merkezidir.
+Auto Minecraft Server Maker, her Minecraft sürümü için (1.7.x - 1.21.x) tek tıkla otomatik sunucu kuran, 12 farklı yapay zekâ motoruyla ve **%100 Çevrimdışı / Ücretsiz Yerel AI (Ollama)** desteğiyle sunucu çökmelerini ve log hatalarını anında teşhis eden, 380+ komutluk gelişmiş Master Admin Paneli içeren profesyonel bir sunucu yönetim merkezidir.
 
 ### Temel Özellikler
 1. **Tek Tıkla Kurulum**: Paper, Purpur, Fabric, Arclight (Forge+Plugin) ve Vanilla sunucuları otomatik indirir, EULA'yı onaylar, `server.properties` ve optimize `start.bat` dosyalarını üretir.
-2. **Bedrock Crossplay**: Geyser eklentisiyle mobil ve konsol oyuncularının sunucuya bağlanmasını sağlar.
-3. **12 AI Motoru**: Çökme raporlarını okur, mod uyumsuzluklarını ve log hatalarını tespit edip adım adım çözüm sunar.
-4. **Gelişmiş Blok & Eşya Merkezi**: 300+ bloğu envantere verme, ayak altına koyma, önüne duvar örme veya platform yapma özellikleri.
-5. **Efsanevi Master Setler**: Lvl 255 kırılmaz zırhlar, tek atan kılıçlar ve tematik Shulker sandıkları (1460 byte RCON sınırına tam uyumlu).
-6. **100% Zero-Leak Güvenlik**: API anahtarlarınız asla repoya veya üçüncü taraflara aktarılmaz.
+2. **Bedrock Crossplay**: Geyser eklentisiyle mobil (iOS/Android) ve konsol oyuncularının sunucuya bağlanmasını sağlar.
+3. **🛡️ 1-Tıkla Yerel AI Hub (Offline & Ücretsiz)**: API anahtarı gerekmeden tek tıkla Ollama kurulumu (`OllamaSetup.exe`), arka planda servis başlatma (`ollama serve`) ve canlı progress bar ile model indirme (`qwen2.5:1.5b`, `llama3.2:3b`, `phi3:mini`, `mistral:7b`).
+4. **12 AI Motoru**: NVIDIA NIM, OpenRouter, OpenAI, Claude, Gemini, Groq, Mistral, Together, Perplexity, Cohere, DeepSeek ve Ollama ile çökme raporlarını okur, mod uyumsuzluklarını tespit edip adım adım çözüm sunar.
+5. **Gelişmiş Blok & Eşya Merkezi**: 300+ bloğu envantere verme, ayak altına koyma, önüne 3x3 duvar örme veya platform yapma özellikleri.
+6. **Efsanevi Master Setler**: Lvl 255 kırılmaz zırhlar, tek atan kılıçlar ve tematik Shulker sandıkları (1460 byte RCON sınırına tam uyumlu).
+7. **100% Zero-Leak Güvenlik**: API anahtarlarınız ve kişisel verileriniz asla repoya veya üçüncü taraflara aktarılmaz.
 
 ---
 
 ## 🤝 Contributing & License
 Contributions, feature requests, and PRs are welcome!
 Licensed under the [MIT License](LICENSE).
+

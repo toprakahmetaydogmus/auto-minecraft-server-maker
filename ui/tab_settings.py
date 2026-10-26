@@ -113,6 +113,23 @@ class TabSettings:
 
     def test_provider(self, provider_name):
         key = self.key_entries[provider_name].get().strip()
+
+        if "Ollama" in provider_name:
+            from core.local_ai_manager import LocalAIManager
+            mgr = LocalAIManager()
+            if not mgr.is_service_running():
+                if messagebox.askyesno("Ollama Servisi Kapalı", "Ollama arka plan servisi (127.0.0.1:11434) şu anda kapalı görünüyor.\n\nServisi otomatik başlatmak ister misiniz?"):
+                    mgr.ensure_service_running()
+            status = mgr.get_status()
+            models_txt = ", ".join(status.get("models", [])) if status.get("models") else "Henüz yüklü model yok"
+            if status.get("running"):
+                msg = f"✅ Ollama Yerel Servisi Aktif!\nKonum: {status.get('path', 'Bulundu')}\nYüklü Modeller ({len(status.get('models', []))}): {models_txt}\n\n100% Offline ve Ücretsiz olarak kullanıma hazır."
+                messagebox.showinfo("Ollama Durumu", msg)
+                return
+            else:
+                messagebox.showerror("Ollama Durumu", "❌ Ollama servisi başlatılamadı. Lütfen 'AI Sunucu Mühendisi' sekmesindeki Yerel AI Hub'dan 'Ollama İndir & Kur' butonunu kullanınız.")
+                return
+
         messagebox.showinfo("Bağlantı Testi", f"[*] {provider_name} servisine ping atılıyor...")
 
         def _worker():
@@ -123,6 +140,7 @@ class TabSettings:
                 self.parent.after(0, messagebox.showinfo, "Test Başarılı!", f"✅ {provider_name} başarıyla yanıt verdi:\n\n{resp}")
 
         threading.Thread(target=_worker, daemon=True).start()
+
 
     def save_settings(self):
         cfg = self.config_manager.config

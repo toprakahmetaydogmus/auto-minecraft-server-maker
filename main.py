@@ -17,6 +17,18 @@ import threading
 import tkinter as tk
 from tkinter import ttk, messagebox
 
+# Critical protection for PyInstaller --noconsole where stdout/stderr are None
+class NullWriter:
+    def write(self, s):
+        pass
+    def flush(self):
+        pass
+
+if sys.stdout is None:
+    sys.stdout = NullWriter()
+if sys.stderr is None:
+    sys.stderr = NullWriter()
+
 from ui.theme import *
 from core.config_manager import ConfigManager
 from core.lan_broadcaster import LanBroadcaster
@@ -24,6 +36,7 @@ from ui.tab_installer import TabInstaller
 from ui.tab_ai_engineer import TabAIEngineer
 from ui.tab_admin_panel import TabAdminPanel
 from ui.tab_settings import TabSettings
+
 
 class AutoMinecraftServerMakerApp:
     def __init__(self, root):
@@ -137,9 +150,19 @@ class AutoMinecraftServerMakerApp:
 
 
 def main():
-    root = tk.Tk()
-    app = AutoMinecraftServerMakerApp(root)
-    root.mainloop()
+    try:
+        root = tk.Tk()
+        app = AutoMinecraftServerMakerApp(root)
+        root.mainloop()
+    except Exception as e:
+        import traceback
+        err_msg = f"Uygulama başlatılırken beklenmedik bir hata oluştu:\n\n{e}\n\nDetay:\n{traceback.format_exc()}"
+        try:
+            messagebox.showerror("Kritik Başlatma Hatası", err_msg)
+        except Exception:
+            pass
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
+

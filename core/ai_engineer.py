@@ -47,6 +47,17 @@ class AIEngineer:
         base_url = prov_info.get("base_url", "")
 
         # Route by provider type
+        if "Ollama" in provider_name:
+            from core.local_ai_manager import LocalAIManager
+            mgr = LocalAIManager()
+            mgr.ensure_service_running()
+            if not model_name or model_name == "llama3":
+                local_models = mgr.list_local_models()
+                if local_models:
+                    model_name = local_models[0]
+                else:
+                    model_name = "qwen2.5:1.5b"
+
         if provider_name == "Google Gemini":
             return self._call_gemini(prompt, system_prompt, model_name, key)
         elif provider_name == "Anthropic":
