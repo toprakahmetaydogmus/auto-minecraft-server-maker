@@ -1,0 +1,176 @@
+# -*- coding: utf-8 -*-
+"""
+AI Server Engineer & Autonomous Diagnostic Engine
+Unified support for 12+ leading AI Providers:
+1. NVIDIA NIM (api.nvcf.nvidia.com / integrate.api.nvidia.com)
+2. OpenRouter (openrouter.ai)
+3. OpenAI (ChatGPT / GPT-4o)
+4. Anthropic (Claude 3.5 Sonnet)
+5. Google Gemini (Gemini 1.5 Flash / Pro)
+6. Groq (Ultra-fast Llama 3)
+7. Mistral AI (Mistral Large / Codestral)
+8. Together AI (Open source models)
+9. Perplexity (Online search grounded AI)
+10. Cohere (Command R+)
+11. DeepSeek (DeepSeek V3 / R1)
+12. Ollama / Local LLM (100% Free & Offline)
+"""
+
+import json
+import urllib.request
+import urllib.error
+import logging
+
+class AIEngineer:
+    def __init__(self, config_manager=None):
+        self.config_manager = config_manager
+
+    def ask(self, prompt, system_prompt=None, provider_name=None, model=None, api_key=None):
+        """Unified query dispatcher across all 12 providers."""
+        if not system_prompt:
+            system_prompt = (
+                "Sen kıdemli bir Minecraft Sunucu Mühendisi ve Sistem Yöneticisisin. "
+                "Sunucu kurulumu, arıza teşhisi, mod ve plugin uyumluluğu, performans optimizasyonu, "
+                "Aikar JVM bayrakları, RCON ve komutlar konusunda uzmansın. "
+                "Cevaplarını açık, adım adım, net ve Türkçe olarak ver."
+            )
+
+        ai_cfg = self.config_manager.get_ai_config() if self.config_manager else {}
+        if not provider_name:
+            provider_name = ai_cfg.get("active_provider", "Ollama (Yerel/Ücretsiz)")
+
+        providers_dict = ai_cfg.get("providers", {})
+        prov_info = providers_dict.get(provider_name, {})
+
+        key = api_key if api_key is not None else prov_info.get("api_key", "")
+        model_name = model if model else prov_info.get("default_model", "")
+        base_url = prov_info.get("base_url", "")
+
+        # Route by provider type
+        if provider_name == "Google Gemini":
+            return self._call_gemini(prompt, system_prompt, model_name, key)
+        elif provider_name == "Anthropic":
+            return self._call_anthropic(prompt, system_prompt, model_name, key)
+        elif provider_name == "Cohere":
+            return self._call_cohere(prompt, system_prompt, model_name, key)
+        else:
+            # Standard OpenAI-compatible format (NVIDIA NIM, OpenRouter, OpenAI, Groq, Mistral, Together, Perplexity, DeepSeek, Ollama)
+            return self._call_openai_compatible(prompt, system_prompt, base_url, model_name, key, provider_name)
+
+    def analyze_log_error(self, log_snippet, provider_name=None):
+        system_prompt = (
+            "Sen uzman bir Minecraft Hata Ayıklama (Debug) Uzmanısın. "
+            "Sana sunulan sunucu çökme raporunu veya hata logunu incele. "
+            "1. Hatanın asıl kök sebebini (Hangi mod, plugin, Java sürümü veya eksik dosya) net olarak söyle. "
+            "2. Sorunu çözmek için yapılacak kesin adım adım işlemi listele. "
+            "3. Gerekiyorsa silinmesi veya güncellenmesi gereken mod/ayar dosyasını belirt."
+        )
+        prompt = f"Aşağıdaki Minecraft sunucu hatasını/çökmesini incele ve çözüm öner:\n\n```\n{log_snippet}\n```"
+        return self.ask(prompt, system_prompt=system_prompt, provider_name=provider_name)
+
+    def optimize_server(self, player_count, ram_gb, server_type, mc_version):
+        system_prompt = "Sen uzman bir Minecraft performans optimizasyonu mühendisisin."
+        prompt = (
+            f"Minecraft {mc_version} sürümünde {server_type} tipi bir sunucu kuruyorum. "
+            f"Tahmini oyuncu sayısı: {player_count}, Ayrılan RAM: {ram_gb}GB. "
+            f"En yüksek TPS ve sıfır lag elde etmek için en ideal server.properties, "
+            f"varsa paper/purpur ayarlarını ve önerilen JVM başlatma parametrelerini ver."
+        )
+        return self.ask(prompt, system_prompt=system_prompt)
+
+    # -------------------------------------------------------------------------
+    # Provider Implementations
+    # -------------------------------------------------------------------------
+    def _call_openai_compatible(self, prompt, system_prompt, base_url, model_name, api_key, provider_name):
+        url = f"{base_url.rstrip('/')}/chat/completions"
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_key}"
+        }
+        if provider_name == "OpenRouter":
+            headers["HTTP-Referer"] = "https://github.com/toprakahmetaydogmus/auto-minecraft-server-maker"
+            headers["X-Title"] = "Auto Minecraft Server Maker"
+
+        payload = {
+            "model": model_name,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0.5
+        }
+
+        try:
+            req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+            return data["choices"][0]["message"]["content"]
+        except urllib.error.HTTPError as e:
+            err_body = e.read().decode("utf-8", errors="replace")
+            return f"[{provider_name} API Hatası {e.code}]: {err_body}"
+        except Exception as e:
+            if "Connection refused" in str(e) and "11434" in str(e):
+                return "[Ollama Bağlantı Hatası]: Ollama servisiniz arka planda çalışmıyor olabilir. Lütfen 'ollama run llama3' komutunu çalıştırınız."
+            return f"[{provider_name} Bağlantı Hatası]: {e}"
+
+    def _call_gemini(self, prompt, system_prompt, model_name, api_key):
+        if not api_key:
+            return "[Gemini Hatası]: Google Gemini API anahtarı tanımlanmamış."
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+        headers = {"Content-Type": "application/json"}
+        payload = {
+            "contents": [
+                {"role": "user", "parts": [{"text": f"Sistem Talimatı: {system_prompt}\n\nKullanıcı: {prompt}"}]}
+            ]
+        }
+        try:
+            req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+            return data["candidates"][0]["content"]["parts"][0]["text"]
+        except Exception as e:
+            return f"[Gemini Hatası]: {e}"
+
+    def _call_anthropic(self, prompt, system_prompt, model_name, api_key):
+        if not api_key:
+            return "[Anthropic Hatası]: Anthropic API anahtarı tanımlanmamış."
+        url = "https://api.anthropic.com/v1/messages"
+        headers = {
+            "Content-Type": "application/json",
+            "x-api-key": api_key,
+            "anthropic-version": "2023-06-01"
+        }
+        payload = {
+            "model": model_name,
+            "max_tokens": 1500,
+            "system": system_prompt,
+            "messages": [{"role": "user", "content": prompt}]
+        }
+        try:
+            req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+            return data["content"][0]["text"]
+        except Exception as e:
+            return f"[Anthropic Hatası]: {e}"
+
+    def _call_cohere(self, prompt, system_prompt, model_name, api_key):
+        if not api_key:
+            return "[Cohere Hatası]: Cohere API anahtarı tanımlanmamış."
+        url = "https://api.cohere.ai/v1/chat"
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_key}"
+        }
+        payload = {
+            "model": model_name,
+            "preamble": system_prompt,
+            "message": prompt
+        }
+        try:
+            req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+            return data.get("text", "")
+        except Exception as e:
+            return f"[Cohere Hatası]: {e}"

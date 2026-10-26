@@ -1,0 +1,52 @@
+name: Build & Release Standalone Executable
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build Standalone Executable
+        run: |
+          python build_exe.py
+
+      - name: Verify Executable
+        run: |
+          if (Test-Path "dist/Auto-Minecraft-Server-Maker.exe") {
+            Write-Host "Executable generated successfully."
+          } else {
+            Write-Error "Executable not found in dist/"
+            exit 1
+          }
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: dist/Auto-Minecraft-Server-Maker.exe
+          name: Auto Minecraft Server Maker ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true

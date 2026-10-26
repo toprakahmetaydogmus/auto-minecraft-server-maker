@@ -1,0 +1,235 @@
+# -*- coding: utf-8 -*-
+"""
+Autonomous Minecraft Server Installer
+Supports automatic downloading, configuration, and setup for:
+- Paper (High Performance Spigot Fork)
+- Purpur (Feature-rich Paper Fork)
+- Fabric (Modern Lightweight Modded Server)
+- Vanilla (Official Mojang Server)
+- Arclight (Forge + Bukkit/Spigot Hybrid for Crossplay & Mods)
+- Geyser & Floodgate (Bedrock crossplay integration)
+"""
+
+import os
+import json
+import urllib.request
+import logging
+
+class ServerInstaller:
+    def __init__(self, target_dir, log_callback=None):
+        self.target_dir = os.path.abspath(target_dir)
+        self.log_callback = log_callback or print
+
+    def log(self, message):
+        self.log_callback(f"[*] {message}")
+
+    def setup_server(self, server_type, mc_version, min_ram=4, max_ram=6, rcon_port=25575, rcon_pass="admin123", server_port=25565, bedrock_port=19132, install_geyser=True):
+        os.makedirs(self.target_dir, exist_ok=True)
+        self.log(f"Sunucu kurulumu başlatılıyor: {server_type} ({mc_version})...")
+
+        jar_filename = f"{server_type.lower()}-{mc_version}.jar"
+        jar_path = os.path.join(self.target_dir, jar_filename)
+
+        success = self._download_jar(server_type, mc_version, jar_path)
+        if not success:
+            self.log(f"[HATA] {server_type} {mc_version} için server jar indirilemedi.")
+            return False
+
+        # eula.txt
+        eula_path = os.path.join(self.target_dir, "eula.txt")
+        with open(eula_path, "w", encoding="utf-8") as f:
+            f.write("# Otomatik kabul edilmis Minecraft EULA\neula=true\n")
+        self.log("EULA otomatik olarak kabul edildi (eula=true).")
+
+        # server.properties
+        self._write_server_properties(server_port, rcon_port, rcon_pass)
+        self.log(f"server.properties yapılandırıldı (Port: {server_port}, RCON: {rcon_port}).")
+
+        # start.bat
+        self._write_start_script(jar_filename, min_ram, max_ram)
+        self.log(f"start.bat optimize Aikar G1GC bayrakları ile oluşturuldu ({min_ram}G - {max_ram}G).")
+
+        # Geyser Crossplay (Bedrock Support)
+        if install_geyser and server_type.lower() in ["paper", "purpur", "arclight", "spigot"]:
+            self._install_geyser_plugin()
+
+        self.log("======================================================")
+        self.log(f"✅ SUNUCU HAZIR! Konum: {self.target_dir}")
+        self.log("======================================================")
+        return True
+
+    def _download_jar(self, server_type, mc_version, dest_path):
+        st = server_type.lower()
+        try:
+            if st == "paper":
+                return self._download_paper(mc_version, dest_path)
+            elif st == "purpur":
+                return self._download_purpur(mc_version, dest_path)
+            elif st == "vanilla":
+                return self._download_vanilla(mc_version, dest_path)
+            elif st == "fabric":
+                return self._download_fabric(mc_version, dest_path)
+            elif st == "arclight":
+                return self._download_arclight(mc_version, dest_path)
+            else:
+                self.log(f"Bilinmeyen sunucu tipi: {server_type}, Paper deneniyor...")
+                return self._download_paper(mc_version, dest_path)
+        except Exception as e:
+            self.log(f"İndirme hatası: {e}")
+            return False
+
+    def _download_paper(self, version, dest_path):
+        api_url = f"https://api.papermc.io/v2/projects/paper/versions/{version}"
+        self.log(f"PaperMC API sorgulanıyor: {api_url}")
+        req = urllib.request.Request(api_url, headers={"User-Agent": "AutoMinecraftServerMaker/1.0"})
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+        builds = data.get("builds", [])
+        if not builds:
+            self.log(f"Bu sürüm için Paper yapısı bulunamadı: {version}")
+            return False
+        latest_build = builds[-1]
+        dl_url = f"https://api.papermc.io/v2/projects/paper/versions/{version}/builds/{latest_build}/downloads/paper-{version}-{latest_build}.jar"
+        self.log(f"İndiriliyor: Paper #{latest_build} ({dl_url})")
+        self._download_file(dl_url, dest_path)
+        return True
+
+    def _download_purpur(self, version, dest_path):
+        dl_url = f"https://api.purpurmc.org/v2/purpur/{version}/latest/download"
+        self.log(f"İndiriliyor: Purpur {version} ({dl_url})")
+        self._download_file(dl_url, dest_path)
+        return True
+
+    def _download_vanilla(self, version, dest_path):
+        manifest_url = "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json"
+        self.log("Mojang Version Manifest alınıyor...")
+        req = urllib.request.Request(manifest_url, headers={"User-Agent": "AutoMinecraftServerMaker/1.0"})
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+
+        v_url = None
+        for v in data.get("versions", []):
+            if v.get("id") == version:
+                v_url = v.get("url")
+                break
+
+        if not v_url:
+            self.log(f"Mojang listesinde {version} bulunamadı.")
+            return False
+
+        with urllib.request.urlopen(v_url, timeout=15) as resp:
+            v_data = json.loads(resp.read().decode("utf-8"))
+
+        server_info = v_data.get("downloads", {}).get("server", {})
+        server_dl = server_info.get("url")
+        if not server_dl:
+            return False
+
+        self.log(f"Mojang resmi Vanilla server indiriliyor: {version}")
+        self._download_file(server_dl, dest_path)
+        return True
+
+    def _download_fabric(self, version, dest_path):
+        installer_url = f"https://meta.fabricmc.net/v2/versions/loader/{version}/0.16.9/1.0.1/server/jar"
+        self.log(f"Fabric Server Launcher indiriliyor: {version}")
+        self._download_file(installer_url, dest_path)
+        return True
+
+    def _download_arclight(self, version, dest_path):
+        # Arclight Forge Hybrid Release
+        api_url = "https://api.github.com/repos/IzzelAliz/Arclight/releases"
+        self.log("GitHub Arclight sürümleri taranıyor...")
+        req = urllib.request.Request(api_url, headers={"User-Agent": "AutoMinecraftServerMaker/1.0"})
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            releases = json.loads(resp.read().decode("utf-8"))
+
+        target_asset = None
+        for r in releases:
+            for a in r.get("assets", []):
+                aname = a.get("name", "").lower()
+                if "forge" in aname and version in aname and aname.endswith(".jar"):
+                    target_asset = a.get("browser_download_url")
+                    break
+            if target_asset:
+                break
+
+        if not target_asset:
+            # Fallback to Paper
+            self.log(f"Arclight release for {version} bulunamadı, Paper kuruluyor...")
+            return self._download_paper(version, dest_path)
+
+        self.log(f"Arclight Forge Hibrit indiriliyor: {target_asset}")
+        self._download_file(target_asset, dest_path)
+        return True
+
+    def _install_geyser_plugin(self):
+        plugins_dir = os.path.join(self.target_dir, "plugins")
+        os.makedirs(plugins_dir, exist_ok=True)
+        geyser_path = os.path.join(plugins_dir, "Geyser-Spigot.jar")
+        if not os.path.exists(geyser_path):
+            self.log("Geyser (Bedrock Crossplay) eklentisi indiriliyor...")
+            try:
+                url = "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot"
+                self._download_file(url, geyser_path)
+                self.log("Geyser eklentisi plugins klasörüne başarıyla kuruldu.")
+            except Exception as e:
+                self.log(f"Geyser indirme uyarısı (İsteğe bağlı): {e}")
+
+    def _download_file(self, url, dest_path):
+        req = urllib.request.Request(url, headers={"User-Agent": "AutoMinecraftServerMaker/1.0"})
+        with urllib.request.urlopen(req, timeout=60) as resp, open(dest_path, "wb") as out:
+            total_size = int(resp.headers.get("Content-Length", 0))
+            downloaded = 0
+            while True:
+                chunk = resp.read(65536)
+                if not chunk:
+                    break
+                out.write(chunk)
+                downloaded += len(chunk)
+                if total_size > 0 and downloaded % (1024 * 1024 * 5) < 65536:
+                    pct = int(downloaded / total_size * 100)
+                    self.log(f"İndiriliyor: %{pct} ({downloaded // (1024*1024)} MB)")
+
+    def _write_server_properties(self, server_port, rcon_port, rcon_pass):
+        props_path = os.path.join(self.target_dir, "server.properties")
+        content = f"""# Minecraft Server Properties - Auto-generated
+server-port={server_port}
+enable-rcon=true
+rcon.port={rcon_port}
+rcon.password={rcon_pass}
+broadcast-rcon-to-ops=true
+online-mode=false
+motd=\\u00a76\\u00a7lAuto Minecraft Server\\u00a7f - \\u00a7aAktif!
+max-players=20
+view-distance=10
+simulation-distance=8
+gamemode=survival
+difficulty=normal
+enable-command-block=true
+spawn-protection=0
+query.port={server_port}
+rate-limit=0
+sync-chunk-writes=true
+"""
+        with open(props_path, "w", encoding="utf-8") as f:
+            f.write(content)
+
+    def _write_start_script(self, jar_filename, min_ram, max_ram):
+        bat_path = os.path.join(self.target_dir, "start.bat")
+        # High performance Aikar G1GC Flags
+        content = f"""@echo off
+title Auto Minecraft Server ({jar_filename})
+chcp 65001 >nul
+cls
+echo =====================================================================
+echo           AUTO MINECRAFT SERVER MAKER - BASLATICI
+echo =====================================================================
+echo.
+echo [*] Sunucu Jar: {jar_filename}
+echo [*] RAM: Min {min_ram}GB - Max {max_ram}GB (Aikar G1GC Optimize)
+echo.
+java -Xms{min_ram}G -Xmx{max_ram}G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true -jar {jar_filename} nogui
+pause
+"""
+        with open(bat_path, "w", encoding="utf-8") as f:
+            f.write(content)

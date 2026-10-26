@@ -1,0 +1,3 @@
+# Auto Minecraft Server Maker Dependencies
+requests>=2.31.0
+pyinstaller>=6.5.0

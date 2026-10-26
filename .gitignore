@@ -1,0 +1,56 @@
+# -----------------------------------------------------------------------------
+# 100% ZERO-LEAK SECURITY RULE: PROTECT SECRETS, LOCAL DATA & RUNTIMES
+# -----------------------------------------------------------------------------
+config.json
+keys.json
+.env
+.env.*
+*.key
+*.pem
+*.cert
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+
+# PyInstaller / Build artifacts
+build/
+dist/
+*.spec
+*.exe
+
+# Downloaded Minecraft servers & runtime data
+server/
+servers/
+world/
+world_nether/
+world_the_end/
+*.jar
+*.log
+eula.txt
+ops.txt
+whitelist.txt
+crash-reports/
+libraries/
+mods/
+plugins/
+usercache.json
+usernamecache.json
+whitelist.json
+banned-ips.json
+banned-players.json
+ops.json
+
+# IDE & OS files
+.vscode/
+.idea/
+*.sublime-workspace
+.DS_Store
+Thumbs.db
