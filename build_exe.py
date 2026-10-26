@@ -8,6 +8,13 @@ import os
 import sys
 import subprocess
 
+# Ensure UTF-8 output if supported
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 def build():
     print("======================================================")
     print("   Building Auto Minecraft Server Maker Executable   ")
@@ -17,7 +24,7 @@ def build():
     try:
         import PyInstaller
     except ImportError:
-        print("[*] PyInstaller bulunamadı, yükleniyor...")
+        print("[*] PyInstaller not found, installing...")
         subprocess.check_call([sys.executable, "-m", "pip", "install", "pyinstaller"])
 
     cmd = [
@@ -34,9 +41,10 @@ def build():
     print(f"[*] Running: {' '.join(cmd)}")
     ret = subprocess.call(cmd)
     if ret == 0:
-        print("\n✅ DERLEME BAŞARILI! Çıktı: dist/Auto-Minecraft-Server-Maker.exe")
+        print("\n[SUCCESS] Build finished successfully! Output: dist/Auto-Minecraft-Server-Maker.exe")
     else:
-        print(f"\n❌ Derleme hatası kodu: {ret}")
+        print(f"\n[ERROR] Build failed with exit code: {ret}")
+        sys.exit(ret)
 
 if __name__ == "__main__":
     build()
