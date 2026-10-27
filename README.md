@@ -73,16 +73,27 @@ Designed to run with a rock-solid **20.0 TPS** even on budget hardware or VPS ma
 1. Download the latest **`Auto-Minecraft-Server-Maker.exe`** from [GitHub Releases](https://github.com/toprakahmetaydogmus/auto-minecraft-server-maker/releases).
 2. Double-click to launch — **zero installation, zero dependencies, 100% self-contained portable executable**.
 
-### Option B: Python / PyPI Package
+### Option B: 1-Line `pip install` (No Git Clone Required!)
+You can install and run the application instantly using Python's `pip`:
+
 ```bash
-# Clone the repository
+# Method 1: Direct GitHub Release Wheel (Fastest & Verified)
+pip install https://github.com/toprakahmetaydogmus/auto-minecraft-server-maker/releases/download/v4.1.0/auto_minecraft_server_maker-4.1.0-py3-none-any.whl
+
+# Method 2: Direct Git Source
+pip install git+https://github.com/toprakahmetaydogmus/auto-minecraft-server-maker.git
+
+# Launch the Application
+auto-mc
+# or
+auto-minecraft-server-maker
+```
+
+### Option C: Developer Mode (Clone & Run)
+```bash
 git clone https://github.com/toprakahmetaydogmus/auto-minecraft-server-maker.git
 cd auto-minecraft-server-maker
-
-# Install dependencies
 pip install -r requirements.txt
-
-# Run the application
 python main.py
 ```
 
