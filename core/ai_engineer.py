@@ -145,8 +145,39 @@ class AIEngineer:
                 "🤖 [Otonom Çevrimdışı AI Mühendisi - Teşhis Raporu]\n\n"
                 "📌 Hata Tespiti: Yetersiz Bellek (Java Heap OutOfMemory).\n\n"
                 "🛠️ Çözüm:\n"
-                "1. Sunucu kurulum ekranında veya start.bat dosyasında RAM miktarını artırın (-Xmx6G veya -Xmx8G).\n"
-                "2. Modlu sunucular için 'FerriteCore' ve 'ModernFix' optimizasyon modlarını kurun."
+                "1. Sunucu kurulum ekranında veya start.bat dosyasında RAM miktarını artırın (-Xmx4G veya -Xmx6G).\n"
+                "2. 3GB gibi düşük bellekli sistemlerde 'server.properties' dosyasında view-distance=8 ve simulation-distance=6 ayarlanmalıdır.\n"
+                "3. Modlu sunucular için 'FerriteCore' ve 'ModernFix' optimizasyon modlarını kurun."
+            )
+
+        if "xray" in p_low or "x-ray" in p_low or "maden" in p_low:
+            return (
+                "🤖 [Otonom Çevrimdışı AI Mühendisi - Anti-Xray Rehberi]\n\n"
+                "📌 Konu: Forge 1.20.1 & Paper Anti-Xray Koruması.\n\n"
+                "🛠️ Çözüm & Yapılandırma:\n"
+                "1. Forge/Arclight 1.20.1 sunucularda Spigot anti-xray chunk paketlerini Forge istemcilerine tam iletemeyebilir.\n"
+                "2. Kesin çözüm için 'mods/antixray-forge-1.4.6+1.20.1.jar' modunu kurun.\n"
+                "3. 'config/antixray.toml' dosyasında 'engineMode = 3' seçildiğinde tüm değerli madenler yeraltında taş/derin kayrak olarak maskelenir ve X-ray hileleri %100 engellenir."
+            )
+
+        if "trade" in p_low or "takas" in p_low or "placeholderapi" in p_low or "papi" in p_low:
+            return (
+                "🤖 [Otonom Çevrimdışı AI Mühendisi - Takas & Ekonomi Rehberi]\n\n"
+                "📌 Konu: Güvenli Takas ve Canlı Akçe/Bakiye Gösterimi.\n\n"
+                "🛠️ Çözüm:\n"
+                "1. Eklenti merkezinden 'PlaceholderAPI', 'Vault' ve 'TAB' eklentilerini kurun.\n"
+                "2. TAB eklentisinin 'plugins/TAB/config.yml' dosyasında '%vault_eco_balance%' yenileme aralığını 200ms yapın.\n"
+                "3. Dolandırıcılığı önlemek için oyuncular arası eşya transferini '/takas <oyuncu>' GUI penceresi üzerinden yönetin."
+            )
+
+        if "geyser" in p_low or "bedrock" in p_low or "crossplay" in p_low or "floodgate" in p_low:
+            return (
+                "🤖 [Otonom Çevrimdışı AI Mühendisi - Crossplay Rehberi]\n\n"
+                "📌 Konu: Mobil (Android/iOS) ve Konsol (Xbox/PS) Bedrock Bağlantısı.\n\n"
+                "🛠️ Çözüm:\n"
+                "1. Eklenti merkezinden 'Geyser-Spigot' ve 'Floodgate' eklentilerini tek tıkla kurun.\n"
+                "2. Bedrock oyuncuları varsayılan UDP 19132 portu üzerinden bağlanır. Playit.gg tüneli kullanıyorsanız Playit panelinden 'Minecraft Bedrock' tüneli açın.\n"
+                "3. Floodgate sayesinde Bedrock oyuncularının Java hesabı satın alması gerekmez; sunucuya otomatik '*' ön ekiyle giriş yaparlar."
             )
 
         # General expert guidance
@@ -155,6 +186,7 @@ class AIEngineer:
             "Talebiniz incelendi. Minecraft sunucunuz için en yüksek performans ve kararlılık yapılandırması:\n"
             "• Sürüm Uyumlu Java: 1.18-1.20.4 için Java 17, 1.20.5+ için Java 21 LTS.\n"
             "• Maksimum TPS için Aikar G1GC bayrakları otomatik uygulanmıştır.\n"
+            "• 3GB RAM için view-distance=8 ve simulation-distance=6 ile %40 bellek tasarrufu sağlanır.\n"
             "• Modrinth üzerinden güvenli modlar 'mods/' dizinine otonom yüklenir.\n"
             "• Yerel LLM için Ayarlar > AI sekmesinden tek tıkla 1.5B/3B Ollama modelini aktif edebilirsiniz."
         )

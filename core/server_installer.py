@@ -298,6 +298,18 @@ class ServerInstaller:
             self._install_floodgate_plugin()
             self.log("> Mobil & Konsol Crossplay (Geyser + Floodgate) yapılandırıldı ✔")
 
+        # Hazır Türkçe Komut Haritası & Rehber Kitapçığı (commands.yml & info.txt)
+        try:
+            from core.plugin_mod_hub import PluginModHub
+            hub = PluginModHub(self.target_dir, log_callback=self.log)
+            hub.deploy_turkish_commands()
+            hub.deploy_essentials_guide()
+            if "arclight" in server_type.lower() or "forge" in server_type.lower():
+                if "1.20.1" in mc_version:
+                    hub.configure_antixray_forge()
+        except Exception as e:
+            self.log(f"Otomatik şablon eklenti uyarısı: {e}")
+
         self.log("======================================================")
         self.log(f"✅ SUNUCU ÇALIŞMAYA HAZIR! Konum: {self.target_dir}")
         self.log("======================================================")
@@ -600,12 +612,13 @@ broadcast-rcon-to-ops=true
 online-mode=false
 motd=\\u00a76\\u00a7lAuto Minecraft Server\\u00a7f - \\u00a7aAktif!
 max-players=20
-view-distance=10
-simulation-distance=8
+view-distance=8
+simulation-distance=6
 gamemode=survival
 difficulty=normal
 enable-command-block=true
 spawn-protection=0
+network-compression-threshold=256
 query.port={server_port}
 rate-limit=0
 sync-chunk-writes=true
@@ -617,14 +630,20 @@ sync-chunk-writes=true
         os.makedirs(self.target_dir, exist_ok=True)
         bat_path = os.path.join(self.target_dir, "start.bat")
         
-        # Legacy Betas/Alphas do not support modern Aikar G1GC flags
+        # Legacy Betas/Alphas (pre-1.8) do not support modern Aikar G1GC flags
         v_low = str(mc_version).lower().strip()
-        is_legacy = v_low.startswith(("b", "a", "c", "rd")) or any(v_low.startswith(x) for x in ["1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7"])
+        legacy_prefixes = ("b", "a", "c", "rd", "infdev", "indev")
+        legacy_minor = ("1.0.", "1.1.", "1.2.", "1.3.", "1.4.", "1.5.", "1.6.", "1.7.")
+        is_legacy = (
+            v_low.startswith(legacy_prefixes)
+            or any(v_low.startswith(x) for x in legacy_minor)
+            or v_low in ("1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7")
+        )
         
         if is_legacy:
             jvm_args = f"-Xms{min_ram}G -Xmx{max_ram}G -jar {jar_filename} nogui"
         else:
-            jvm_args = f"-Xms{min_ram}G -Xmx{max_ram}G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true -jar {jar_filename} nogui"
+            jvm_args = f"-Xms{min_ram}G -Xmx{max_ram}G -Duser.timezone=Europe/Istanbul -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true -jar {jar_filename} nogui"
 
         # Safe compatible Java runtime resolution
         java_target = getattr(self, "java_bin", "")

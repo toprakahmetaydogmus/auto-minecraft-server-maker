@@ -10,7 +10,7 @@ import customtkinter as ctk
 from tkinter import messagebox
 
 from ui.modern_theme import *
-from core.plugin_mod_hub import PluginModHub, POPULAR_PLUGINS
+from core.plugin_mod_hub import PluginModHub, POPULAR_PLUGINS, SERVER_PRESETS
 
 class CTkTabPlugins(ctk.CTkFrame):
     def __init__(self, master, config_manager, **kwargs):
@@ -23,16 +23,16 @@ class CTkTabPlugins(ctk.CTkFrame):
 
     def _build_ui(self):
         self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(2, weight=1)
 
-        # Üst Başlık & Bilgi
+        # 1. Üst Başlık & Bilgi
         header_card = ctk.CTkFrame(self, fg_color=COLOR_BG_CARD, corner_radius=12, border_width=1, border_color=COLOR_BORDER)
-        header_card.grid(row=0, column=0, sticky="ew", padx=0, pady=(0, 10))
+        header_card.grid(row=0, column=0, sticky="ew", padx=0, pady=(0, 8))
 
         h_inner = ctk.CTkFrame(header_card, fg_color="transparent")
-        h_inner.pack(fill="x", padx=16, pady=10)
+        h_inner.pack(fill="x", padx=16, pady=8)
 
-        ctk.CTkLabel(h_inner, text="🔌 1-TIKLA EKLENTİ (PLUGIN) VE MOD MERKEZİ", font=FONT_SUBTITLE, text_color=COLOR_ACCENT_GREEN).pack(side="left")
+        ctk.CTkLabel(h_inner, text="🔌 1-TIKLA EKLENTİ (PLUGIN), MOD & HAZIR PAKETLER", font=FONT_SUBTITLE, text_color=COLOR_ACCENT_GREEN).pack(side="left")
 
         btn_refresh = ctk.CTkButton(
             h_inner,
@@ -45,9 +45,57 @@ class CTkTabPlugins(ctk.CTkFrame):
         )
         btn_refresh.pack(side="right")
 
-        # Scrollable Eklenti Listesi
+        # 2. HAZIR SUNUCU PAKETLERİ (SERVER PRESETS) BANNERI
+        presets_card = ctk.CTkFrame(self, fg_color="#0d1424", corner_radius=12, border_width=1, border_color="#38bdf8")
+        presets_card.grid(row=1, column=0, sticky="ew", padx=0, pady=(0, 8))
+
+        p_inner = ctk.CTkFrame(presets_card, fg_color="transparent")
+        p_inner.pack(fill="x", padx=14, pady=8)
+
+        ctk.CTkLabel(p_inner, text="👑 HAZIR SUNUCU ŞABLONLARI (1-TIKLA TÜM EKLENTİLER & AYARLAR):", font=FONT_BOLD, text_color=COLOR_ACCENT_GOLD).pack(anchor="w", pady=(0, 6))
+
+        p_btns = ctk.CTkFrame(p_inner, fg_color="transparent")
+        p_btns.pack(fill="x")
+
+        btn_rpg = ctk.CTkButton(
+            p_btns,
+            text="👑 Ultimate Pro RPG & Crossplay",
+            font=FONT_BOLD,
+            fg_color="#0284c7",
+            hover_color="#0369a1",
+            text_color="#ffffff",
+            height=32,
+            command=lambda: self._install_preset("ultimate_rpg_crossplay")
+        )
+        btn_rpg.pack(side="left", padx=(0, 8))
+
+        btn_vanilla = ctk.CTkButton(
+            p_btns,
+            text="🛡️ Sade Güvenli Crossplay",
+            font=FONT_BOLD,
+            fg_color="#16a34a",
+            hover_color="#15803d",
+            text_color="#ffffff",
+            height=32,
+            command=lambda: self._install_preset("safe_crossplay_vanilla")
+        )
+        btn_vanilla.pack(side="left", padx=(0, 8))
+
+        btn_eco = ctk.CTkButton(
+            p_btns,
+            text="💰 Büyük Ekonomi & Krallık",
+            font=FONT_BOLD,
+            fg_color="#d97706",
+            hover_color="#b45309",
+            text_color="#ffffff",
+            height=32,
+            command=lambda: self._install_preset("hardcore_towny_economy")
+        )
+        btn_eco.pack(side="left")
+
+        # 3. Scrollable Eklenti Listesi
         self.scroll_list = ctk.CTkScrollableFrame(self, fg_color=COLOR_BG_CARD, corner_radius=12, border_width=1, border_color=COLOR_BORDER)
-        self.scroll_list.grid(row=1, column=0, sticky="nsew", padx=0, pady=0)
+        self.scroll_list.grid(row=2, column=0, sticky="nsew", padx=0, pady=0)
 
         self._render_plugin_cards()
 
@@ -102,6 +150,16 @@ class CTkTabPlugins(ctk.CTkFrame):
                 self.after(0, messagebox.showerror, "Hata", f"❌ '{plug['name']}' indirilirken bir sorun oluştu.")
         threading.Thread(target=_worker, daemon=True).start()
 
+    def _install_preset(self, preset_key):
+        def _worker():
+            ok = self.hub.install_preset(preset_key)
+            self.after(0, self._render_plugin_cards)
+            if ok:
+                self.after(0, messagebox.showinfo, "Hazır Paket Kuruldu", "👑 Seçilen hazır sunucu paketi, tüm eklentileri, Türkçe komutları ve optimizasyonlarıyla eksiksiz kuruldu!")
+            else:
+                self.after(0, messagebox.showerror, "Kurulum Hatası", "❌ Hazır paket kurulurken bir sorun oluştu.")
+        threading.Thread(target=_worker, daemon=True).start()
+
     def _refresh_list(self):
         sdir = self.config_manager.get_server_config().get("server_dir", os.path.join(os.getcwd(), "server"))
         self.hub = PluginModHub(sdir, log_callback=self._on_log)
@@ -109,3 +167,4 @@ class CTkTabPlugins(ctk.CTkFrame):
 
     def _on_log(self, msg):
         pass
+

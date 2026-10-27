@@ -76,7 +76,7 @@ class CTkTabInstaller(ctk.CTkFrame):
             ("10+ SUNUCU TÜRÜ", "Paper • Purpur • Fabric • Forge...", COLOR_ACCENT_GREEN),
             ("1.0 ➔ 1.21.4+", "Tüm Sürümler (Eskiden Yeniye)", COLOR_ACCENT_CYAN),
             ("12 AI MOTORU", "Ollama, Groq, DeepSeek & Yerel", COLOR_ACCENT_PURPLE),
-            ("380+ ADMİN KOMUTU", "300+ Blok • 16 Kategori Sekmesi", COLOR_ACCENT_GOLD),
+            ("500+ ADMİN KOMUTU", "300+ Blok • 24 Kategori Sekmesi", COLOR_ACCENT_GOLD),
         ]
 
         for idx, (title, sub, color) in enumerate(metrics):
@@ -122,10 +122,10 @@ class CTkTabInstaller(ctk.CTkFrame):
         chips_frame.pack(fill="x", padx=10, pady=(0, 8))
 
         chips = [
+            ("👑 Pro RPG & Crossplay", "1.20.1 Arclight crossplay ve 24 eklenti hazır paket kur 3gb ram"),
             ("⚔️ 1.20.1 Büyü & Kılıç", "1.20.1 Forge büyü kılıç modu ve harita kur 6gb ram"),
             ("🗺️ 1.20.4 Fabric Harita & FPS", "1.20.4 hafif Fabric harita ve optimizasyon modları kur 4gb ram"),
             ("🧟 1.20.1 Zombi Kıyameti", "1.20.1 zombi kıyameti ve hayatta kalma modlu sunucu kur 6gb ram"),
-            ("⚙️ 1.20.1 Create & Teknoloji", "1.20.1 Forge create teknoloji ve depolama modlu sunucu kur 6gb ram"),
             ("📱 1.21.1 Crossplay", "1.21.1 Bedrock ve Java mobil crossplay Geyser sunucusu kur"),
             ("🔥 26.3 En Son Sürüm", "26.3 Wilderness Bound en son stabil sunucu kur 4GB RAM")
         ]

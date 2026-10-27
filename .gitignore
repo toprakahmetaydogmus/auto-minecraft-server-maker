@@ -55,3 +55,4 @@ ops.json
 *.sublime-workspace
 .DS_Store
 Thumbs.db
+brag-output/
