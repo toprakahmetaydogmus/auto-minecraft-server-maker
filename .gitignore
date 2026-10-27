@@ -25,6 +25,7 @@ build/
 dist/
 *.spec
 *.exe
+*.egg-info/
 
 # Downloaded Minecraft servers & runtime data
 tools/

@@ -165,6 +165,35 @@ class TestV410Features(unittest.TestCase):
         self.assertIn("Geyser-Spigot", resp_geyser)
         self.assertIn("Floodgate", resp_geyser)
 
+    def test_comprehensive_version_matrix(self):
+        """Validates that all major Minecraft versions are accessible without omission."""
+        all_vers = ServerInstaller.get_supported_versions("all")
+        self.assertGreaterEqual(len(all_vers), 160)
+
+        # Verify key historical & modern milestones exist
+        all_vers_str = " ".join(all_vers)
+        self.assertIn("1.20.1", all_vers_str)
+        self.assertIn("1.21.4", all_vers_str)
+        self.assertIn("1.19.4", all_vers_str)
+        self.assertIn("1.18.2", all_vers_str)
+        self.assertIn("1.16.5", all_vers_str)
+        self.assertIn("1.12.2", all_vers_str)
+        self.assertIn("1.8.9", all_vers_str)
+        self.assertIn("1.7.10", all_vers_str)
+        self.assertIn("1.5.2", all_vers_str)
+        self.assertIn("1.0.0", all_vers_str)
+        self.assertIn("b1.8.1", all_vers_str)
+
+        # Verify popular category
+        pop_vers = ServerInstaller.get_supported_versions("popular")
+        self.assertIn("1.20.1", pop_vers)
+        self.assertIn("1.21.4 (The Garden Awakens)", pop_vers)
+
+        # Verify pvp category
+        pvp_vers = ServerInstaller.get_supported_versions("pvp")
+        self.assertIn("1.8.9 (Bountiful Update)", pvp_vers)
+        self.assertIn("1.7.10 (The Update that Changed the World)", pvp_vers)
+
 
 if __name__ == "__main__":
     unittest.main()

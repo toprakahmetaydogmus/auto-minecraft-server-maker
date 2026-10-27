@@ -205,38 +205,43 @@ class CTkTabInstaller(ctk.CTkFrame):
         self.lbl_versions = ctk.CTkLabel(left_card, text=t("installer_version_label"), font=FONT_BOLD, text_color=COLOR_TEXT_MAIN)
         self.lbl_versions.pack(anchor="w", pady=(2, 2))
 
-        # Sürüm Kategori Filtre Butonları (2 Satır)
+        # Sürüm Kategori Filtre Butonları (2 Satır - Eksiksiz Tüm Sürümler)
+        self.category_filter_buttons = {}
         ver_cat_frame = ctk.CTkFrame(left_card, fg_color="transparent")
         ver_cat_frame.pack(fill="x", pady=(0, 2))
 
         row_cat1 = ctk.CTkFrame(ver_cat_frame, fg_color="transparent")
         row_cat1.pack(fill="x", pady=(0, 2))
         for cat_key, cat_label, cat_color in [
-            ("drops", "🔥 26.x", "#f97316"),
+            ("all", "⚡ Tümü (160+)", COLOR_ACCENT_GREEN),
+            ("popular", "👑 Popüler", COLOR_ACCENT_GOLD),
             ("modern_121", "⭐ 1.21", COLOR_ACCENT_CYAN),
             ("modern_120", "💎 1.20", COLOR_ACCENT_GREEN),
             ("golden", "🌿 1.16-1.19", "#38bdf8")
         ]:
-            ctk.CTkButton(
+            btn = ctk.CTkButton(
                 row_cat1,
                 text=cat_label,
                 font=("Segoe UI", 8, "bold"),
                 height=22,
-                fg_color=COLOR_BG_CARD_HOVER,
+                fg_color=COLOR_ACCENT_CYAN if cat_key == "all" else COLOR_BG_CARD_HOVER,
+                text_color="#000000" if cat_key == "all" else COLOR_TEXT_MAIN,
                 hover_color=cat_color,
                 command=lambda c=cat_key: self._filter_version_category(c)
-            ).pack(side="left", padx=1, expand=True, fill="x")
+            )
+            btn.pack(side="left", padx=1, expand=True, fill="x")
+            self.category_filter_buttons[cat_key] = btn
 
         row_cat2 = ctk.CTkFrame(ver_cat_frame, fg_color="transparent")
         row_cat2.pack(fill="x", pady=(0, 4))
         for cat_key, cat_label, cat_color in [
             ("classic", "🏰 1.0-1.15", COLOR_ACCENT_GOLD),
+            ("pvp", "⚔️ PvP (1.8/1.7)", "#f43f5e"),
             ("betas", "🧪 Beta", COLOR_ACCENT_PURPLE),
             ("alphas", "📜 Alfa", "#ec4899"),
-            ("infdev_classic", "🏛️ Klasik", "#a855f7"),
-            ("all", "⚡ Tümü", COLOR_ACCENT_GREEN)
+            ("drops", "🔥 26.x", "#f97316")
         ]:
-            ctk.CTkButton(
+            btn = ctk.CTkButton(
                 row_cat2,
                 text=cat_label,
                 font=("Segoe UI", 8, "bold"),
@@ -244,11 +249,15 @@ class CTkTabInstaller(ctk.CTkFrame):
                 fg_color=COLOR_BG_CARD_HOVER,
                 hover_color=cat_color,
                 command=lambda c=cat_key: self._filter_version_category(c)
-            ).pack(side="left", padx=1, expand=True, fill="x")
+            )
+            btn.pack(side="left", padx=1, expand=True, fill="x")
+            self.category_filter_buttons[cat_key] = btn
 
-        all_versions = ServerInstaller.get_supported_versions("modern_121")
+        # Varsayılan olarak tüm sürümleri (163+) yükle
+        all_versions = ServerInstaller.get_supported_versions("all")
 
-        self.ver_var = ctk.StringVar(value=all_versions[0] if all_versions else "1.21.4 (The Garden Awakens)")
+        default_ver = "1.20.1" if "1.20.1" in all_versions else (all_versions[0] if all_versions else "1.21.4 (The Garden Awakens)")
+        self.ver_var = ctk.StringVar(value=default_ver)
         self.ver_menu = ctk.CTkOptionMenu(
             left_card,
             variable=self.ver_var,
@@ -466,14 +475,23 @@ class CTkTabInstaller(ctk.CTkFrame):
         self.lbl_quick_ip.pack(side="right")
 
     def _filter_version_category(self, cat_key):
-        if cat_key == "all":
-            v_list = ServerInstaller.get_supported_versions()
-        else:
-            v_list = ServerInstaller.get_supported_versions(cat_key)
+        v_list = ServerInstaller.get_supported_versions(cat_key)
+        if not v_list:
+            v_list = ServerInstaller.SUPPORTED_VERSIONS
         self.ver_menu.configure(values=v_list)
-        if v_list:
+        
+        # Aktif kategori butonunu vurgula
+        if hasattr(self, "category_filter_buttons"):
+            for k, btn in self.category_filter_buttons.items():
+                if k == cat_key:
+                    btn.configure(fg_color=COLOR_ACCENT_CYAN, text_color="#000000")
+                else:
+                    btn.configure(fg_color=COLOR_BG_CARD_HOVER, text_color=COLOR_TEXT_MAIN)
+
+        curr = self.ver_var.get()
+        if curr not in v_list and v_list:
             self.ver_var.set(v_list[0])
-            self._update_java_status()
+        self._update_java_status()
 
     def _on_custom_ver_changed(self, event=None):
         val = self.custom_ver_var.get().strip()

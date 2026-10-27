@@ -197,13 +197,34 @@ class ServerInstaller:
             "Indev 20100223",
             "Indev 0.31",
             "c0.30 (Late Classic)"
+        ],
+        "popular": [
+            "1.21.4 (The Garden Awakens)",
+            "1.21.1 (Tricky Trials)",
+            "1.20.4 (Trails & Tales Stable)",
+            "1.20.1",
+            "1.19.4 (The Wild Update)",
+            "1.18.2 (Caves & Cliffs II)",
+            "1.16.5 (Nether Update)",
+            "1.12.2 (World of Color Update)",
+            "1.8.9 (Bountiful Update)",
+            "1.7.10 (The Update that Changed the World)",
+            "1.5.2 (Redstone Update)"
+        ],
+        "pvp": [
+            "1.8.9 (Bountiful Update)",
+            "1.8.8",
+            "1.7.10 (The Update that Changed the World)",
+            "1.7.2",
+            "1.6.4 (Horse Update)",
+            "1.5.2 (Redstone Update)"
         ]
     }
 
-    # Flat list preserving unique versions
+    # Flat list preserving unique versions with modern releases first
     _all_vers = []
     _seen_vers = set()
-    for _group in ["drops", "modern_121", "modern_120", "golden", "classic", "betas", "alphas", "infdev_classic"]:
+    for _group in ["modern_121", "modern_120", "golden", "classic", "drops", "betas", "alphas", "infdev_classic"]:
         for _v in CATEGORIZED_VERSIONS[_group]:
             if _v not in _seen_vers:
                 _seen_vers.add(_v)
@@ -221,7 +242,7 @@ class ServerInstaller:
 
     @classmethod
     def get_supported_versions(cls, category=None):
-        if category and category in cls.CATEGORIZED_VERSIONS:
+        if category and category != "all" and category in cls.CATEGORIZED_VERSIONS:
             return cls.CATEGORIZED_VERSIONS[category]
         return cls.SUPPORTED_VERSIONS
 
