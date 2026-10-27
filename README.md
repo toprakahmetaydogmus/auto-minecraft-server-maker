@@ -1,189 +1,113 @@
-# ⚔️ Auto Minecraft Server Maker & AI Engineer Pro (v3.7.0 Ultra)
+# ⚔️ Auto Minecraft Server Maker & AI Engineer Pro (v4.0.0 Master)
 
 <div align="center">
 
-![Python Version](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![GUI Framework](https://img.shields.io/badge/GUI-CustomTkinter%20Cyberpunk-0078D6?style=for-the-badge&logo=windows11&logoColor=white)
-![Minecraft](https://img.shields.io/badge/Minecraft-All%20Versions%20(26.x%20Drops%20%7C%201.21%20%7C%20Betas)-2E7D32?style=for-the-badge&logo=minecraft&logoColor=white)
-![Server Flavors](https://img.shields.io/badge/Flavors-10%2B%20Supported-FF6F00?style=for-the-badge&logo=apache)
-![AI Wizard](https://img.shields.io/badge/AI%20Wizard-Autonomous%20Setup-7B1FA2?style=for-the-badge&logo=openai&logoColor=white)
-![Localization](https://img.shields.io/badge/Language-TR%20%7C%20EN%20Bilingual-00BCD4?style=for-the-badge)
+![Version](https://img.shields.io/badge/Release-v4.0.0%20Master-00E5FF?style=for-the-badge&logo=github&logoColor=white)
+![Python Version](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.14-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![GUI Framework](https://img.shields.io/badge/GUI-CustomTkinter%20Cyberpunk-9333ea?style=for-the-badge&logo=windows11&logoColor=white)
+![Minecraft](https://img.shields.io/badge/Minecraft-163%2B%20Versions%20(26.x%20%E2%86%92%20c0.30)-2E7D32?style=for-the-badge&logo=minecraft&logoColor=white)
+![Local AI](https://img.shields.io/badge/Local%20AI-Ollama%201.5B%20%7C%20Zero--Key-FF6F00?style=for-the-badge&logo=ollama&logoColor=white)
+![Modrinth](https://img.shields.io/badge/Modrinth-Autonomous%20Downloader-00AF5C?style=for-the-badge&logo=modrinth&logoColor=white)
 ![Security](https://img.shields.io/badge/Security-100%25%20Zero--Leak-00C853?style=for-the-badge&logo=shield&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-F57C00?style=for-the-badge)
 
-**The Ultimate Autonomous Minecraft Server Creator, AI Setup Wizard, Crash Diagnostics, 1-Click Global Tunnels & 380+ Command Master Administration Suite.**
+**The Ultimate Autonomous Minecraft Server Orchestrator, Zero-API-Key Local AI Assistant, Modrinth Auto-Mod Downloader, Crash Doctor, Portless Tunneling & 380+ Command Master Administration Suite.**
 
-[English](#-english-documentation) • [Türkçe Dokümantasyon](#-türkçe-dokümantasyon)
+[English Documentation](#-english-documentation) • [Türkçe Dokümantasyon](#-türkçe-dokümantasyon) • [Download Standalone .EXE](https://github.com/toprakahmetaydogmus/auto-minecraft-server-maker/releases/tag/v4.0.0)
 
 </div>
 
 ---
 
-## 🌟 Highlights & Key Features (v3.7.0 Ultra)
+## 🌟 What's New in v4.0.0 Master?
 
-### 0. 🚀 2026 Game Drops & Named Updates (26.4, 26.3, 26.2, 26.1)
-- Full native support for the new 2026 Minecraft Game Drops:
-  - **26.4 (Fourth Drop 2026 - Beklenen)**: Bleeding edge Mojang snapshot routing!
-  - **26.3 (Wilderness Bound - Yaban Hayatı)**: Direct Purpur & Fabric support!
-  - **26.2 (Chaos Cubed - Küp Kaosu)**: High-performance crossplay ready!
-  - **26.1 (Tiny Takeover - Küçük İstilacılar)**: Drop-in optimized!
-- All historical named updates from 1.21 (Tricky Trials), 1.20 (Trails & Tales) down to 1.0.0 (Minecon Release).
+### 1. 🛡️ Java 25 & `sun.misc.Unsafe` Crash Prevention (Root-Level Fix)
+* **The Problem:** Modern systems running Java 25 (`Temurin-25.0.3+9`) crashed immediately on Forge / Arclight 1.20.1 due to OpenJDK removing `sun.misc.Unsafe.ensureClassInitialized`.
+* **The Solution:** 
+  * Integrated autonomous runtime detection (`JavaDetector.ensure_compatible_java`).
+  * Strictly forces **Java 17** for Minecraft 1.18 through 1.20.4, bypassing system Java 25.
+  * Auto-provisions portable **Adoptium OpenJDK 17** (`tools/java/jre-17/bin/java.exe`).
+  * Emits runtime-hardened `start.bat` with JVM reflection flags: `--add-opens java.base/sun.misc=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED`.
 
-### 1. 🛠️ 100% Resolved Download & Progress Engine (Zero-Crash Guarantee)
-- Solved the `_progress_callback()` multi-parameter mismatch with universal argument absorption (`*args, **kwargs`) and thread-safe UI updates.
-- Dynamic Fabric Loader/Installer resolver (`0.20.1` / `1.1.2`) ensuring instant HTTP 200 server downloads.
-- Purpur API fallback for Spigot/Paper flavors delivering ultra-high TPS.
+### 2. 🤖 100% Local AI by Default (Zero API Keys Needed!)
+* **No API Key Required:** Defaults to `Ollama (Yerel/Ücretsiz)` and ultra-fast `qwen2.5:1.5b` (or `llama3.2:1b/3b`).
+* **1-Click Local Setup:** Download Ollama and pull lightweight models with streaming progress directly from the UI.
+* **Autonomous Offline Expert Engine:** Even without internet or Ollama, the built-in offline NLP engine analyzes prompt intents, diagnoses crash stack traces, and tunes server memory at **0 ms latency**.
 
-### 2. 💎 Full 38.8 MB Standalone Windows Executable & Metadata (v3.7.0)
-- Pre-packaged **38.8 MB** self-contained Windows executable with zero external prerequisites.
-- Embedded high-resolution icon (`app_icon.ico`) and native Windows PE file version metadata (3.7.0.0).
-- Quick scenario chips for instant setup (Fabric Friends, Bedrock Crossplay, Competitive PvP, Classic Bedwars, Nostalgic b1.7.3 Beta).
+### 3. 📦 Autonomous Mod Fetcher (Modrinth Public REST API)
+* Just describe your theme (e.g. *"1.20.1 magic and swords forge server"*), and the engine:
+  * Identifies the required loader (`Forge`, `Fabric`, `NeoForge`).
+  * Directly queries Modrinth's official CDN for verified, safe `.jar` files.
+  * Downloads mods like `Iron's Spells 'n Spellbooks`, `Simply Swords`, `Better Combat`, `JourneyMap`, `JEI`, and `FerriteCore` straight into `server/mods`.
 
-### 3. 🌐 Full Bilingual Architecture (TR / EN - Türkçe & English)
-- Instant 1-click language switcher (`🌐 TR/EN`) in the sidebar header!
-- All buttons, dialogs, banners, logs, and admin commands localized cleanly.
-  - ⚡ **PaperMC**: Ultra-high performance Spigot fork.
-  - 🟣 **Purpur**: Feature-packed, customizable Paper fork.
-  - 🧵 **Fabric**: Modern, lightweight, fast modded loader.
-  - 🏹 **Arclight (Forge + Bukkit)**: Full hybrid supporting Forge mods + Spigot plugins simultaneously.
-  - 🔮 **Mohist**: Alternative Forge + Spigot hybrid server.
-  - 🔨 **Forge**: Classic heavy modded server (1.12.2 - 1.20.1).
-  - ⚡ **NeoForge**: Next-gen modded server for Minecraft 1.20.4+.
-  - 🌐 **Velocity**: Modern high-performance network proxy.
-  - 🔗 **BungeeCord**: Classic server network proxy.
-  - 📦 **Vanilla**: Official pure Mojang server software.
-- **Crossplay Ready**: Built-in 1-click **Geyser** and **Floodgate** for seamless Java & Bedrock (Mobile/Xbox/PS/PC) crossplay.
-- **Intelligent Java Detector**: Automatically scans and detects Java 8, 16, 17, and 21 across your system, matching the exact requirement of the target Minecraft version.
+### 4. 🌐 5-Engine Multi-Tunneling (Play Without Port Forwarding)
+* **Playit.gg:** 1-Click zero-config global tunnel (`xyz.gl.at.ply.gg:port`).
+* **Cloudflare Named Tunnels:** Enterprise-grade subdomains.
+* **ngrok & Localtonet:** Custom token & endpoint support.
+* **UPnP Autonomous Mapper:** Local router port mapper.
 
-### 3. 🌐 1-Click Global Tunnel (Modemsiz Arkadaş Oynatma - Playit.gg & UPnP)
-- Play with your friends globally without port forwarding or knowing your router password!
-- 1-Click Playit.gg autonomous client (`xyz.gl.at.ply.gg:port`) + automatic local UPnP port mapper.
-
-### 4. 🔌 1-Click Plugin & Mod Hub
-- Download and install 12+ essential plugins with one click (Geyser, Floodgate, ViaVersion, EssentialsX, LuckPerms, Vault, WorldEdit, Chunky, ClearLag, SkinsRestorer, Spark, TAB).
-
-### 5. ⚙️ Visual server.properties Editor
-- Configure PvP, Hardcore, Flight, Command Blocks, Whitelist, Game Mode, Difficulty, Max Players, and View Distance with visual switches.
-
-### 6. 💾 World Backup & 1-Click Restore Manager
-- Create instant timestamped `.zip` archives of your worlds and configurations, and restore with one click.
-
-### 7. 📊 Live Hardware & Process Telemetry
-- Real-time CPU %, RAM consumption, and Java process metrics updated live in the sidebar.
-
+### 5. 📜 Complete 163+ Version History (2026 Game Drops down to Classic)
+* **2026 Drops:** 26.4, 26.3 (Wilderness Bound), 26.2 (Chaos Cubed), 26.1 (Tiny Takeover).
+* **Modern Releases:** 1.21.4 (The Garden Awakens), 1.21.1, 1.20.4, 1.20.1, 1.19.4.
+* **Golden Age:** 1.16.5, 1.12.2, 1.8.9, 1.7.10.
+* **Nostalgia & Betas:** Beta b1.8.1, b1.7.3, Alpha a1.2.6 Halloween, Infdev, Indev, and Classic c0.30.
 
 ---
 
-### 2. 🤖 AI Server Engineer & Crash Diagnostics (12+ AI Engines)
-Never struggle with cryptic stack traces, mod conflicts, or chunk corruption again! Supports 12 leading AI engines:
+## 🚀 Quick Start
 
-| AI Provider | Description & Models |
-|---|---|
-| 🟢 **NVIDIA NIM** | Meta Llama 3.1 70B/405B, Mixtral via NVIDIA NIM API |
-| 🌐 **OpenRouter** | 100+ models including Claude 3.5 Sonnet, DeepSeek & Free Llama 3 |
-| 🧠 **OpenAI** | GPT-4o, GPT-4o-mini |
-| 🪶 **Anthropic** | Claude 3.5 Sonnet, Claude 3 Haiku |
-| 🔷 **Google Gemini** | Gemini 1.5 Pro, Gemini 1.5 Flash |
-| ⚡ **Groq** | Blazing-fast real-time inference (Llama 3.3 70B) |
-| 🌪️ **Mistral AI** | Mistral Large, Codestral |
-| 🤝 **Together AI** | Meta Llama 3.1 Turbo |
-| 🔍 **Perplexity** | Real-time web-grounded Sonar AI |
-| 💬 **Cohere** | Command R+ |
-| 🐋 **DeepSeek** | DeepSeek V3, DeepSeek R1 |
-| 🦙 **Ollama (Local)** | **100% Free & Offline** (Llama 3, Qwen, Mistral - Zero API keys required!) |
+### Option A: Standalone Windows Executable (Recommended)
+1. Download **`Auto-Minecraft-Server-Maker-v4.0.0-Master.exe`** from [GitHub Releases](https://github.com/toprakahmetaydogmus/auto-minecraft-server-maker/releases/tag/v4.0.0).
+2. Double-click to run — **zero installation, zero dependencies, 100% self-contained (38.87 MB)**.
 
-**AI Capabilities:**
-- 🚨 **Autonomous Crash Diagnosis**: Analyzes `crash-reports/` and `logs/latest.log` to pinpoint exact mod ID conflicts, missing dependencies, or corrupted configs.
-- ⚡ **Lag-Free Server Optimizer**: Generates custom JVM flags and config recommendations tailored to your RAM and player count.
-- 💬 **Live Chat & Command Generator**: Generates complex NBT commands, `/fill` structures, and plugin setup guides.
-
----
-
-### 3. 🎮 Master Admin Control Panel & Universal Block Hub
-Embedded control center with **380+ commands** categorized across 16 tabs:
-
-- 🧱 **Universal Block Hub**:
-  - Interactive catalog with 300+ Minecraft blocks.
-  - **5 Placement Modes**:
-    1. 🚀 **Inventory Delivery** (`give {p} {block} {qty}`)
-    2. 🦶 **Under Feet** (`execute at {p} run setblock ~ ~-1 ~ {block}`)
-    3. 🧱 **3x3 Front Wall** (`execute at {p} run fill ^-1 ^ ^3 ^1 ^2 ^3 {block}`)
-    4. 🕳️ **Box Caging** (`execute at {p} run fill ~-1 ~-1 ~-1 ~1 ~2 ~1 {block} outline`)
-    5. 🌟 **5x5 Platform** (`execute at {p} run fill ~-2 ~-1 ~-2 ~2 ~-1 ~2 {block}`)
-  - Flexible quantities: `1x`, `16x`, `32x`, `64x` (1 stack), `128x`, `256x`, `576x` (Full Inventory).
-- 📦 **Themed Mega Shulker Box Kits** (Strictly sized below Minecraft's 1460-byte RCON limit):
-  - 🧱 Legendary Admin Box (Barrier, Command Blocks, Light Lvl 15, Bedrock, Spawner)
-  - 💎 Billionaire Miner Box (Netherite, Diamond, Emerald, Ancient Debris)
-  - 🏗️ Luxury Architect Box (Cherry, Bamboo, Deepslate, Quartz, Tinted Glass)
-  - 💡 Ultimate Lighting Box (Beacon, Sea Lantern, 3 Froglights, End Rod)
-  - ⚙️ Redstone Engineer Box (TNT, Slime, Honey, Pistons, Observers, Hoppers)
-  - 🌈 Rainbow Concrete Box (All 9 vibrant full-stack concretes)
-  - 🪵 Wood Master Box (All 9 tree species logs)
-  - ⛏️ Deepslate Ore Box (All deepslate ores)
-- ⚡ **Legendary Master Equipment Sets (Lvl 255)**:
-  - Apocalypse Sword, Seismic Pickaxe, Silk Touch Pickaxe, Forest Axe, Nuclear Bow, Lightning Trident, Master Armor, Infinite Elytra.
-- 🤡 **Troll & Player Fun Suite**: Space Launch (Y:500), Bury (Y:-58), Glass/Obsidian cages, Anvil drop, Nausea 255, Blindness, Warden scream jumpscare.
-- 🪄 **Enchanter & 30+ Potion Buffs**: MEGA ULTRA BUFF, Haste 255, Resistance V, Strength 100, Speed 5, Night Vision.
-- 🌐 **Multi-Interface LAN Broadcaster**: Broadcasts UDP discovery (`224.0.2.60:4445`) across WiFi, Ethernet, and VPN adapters (Radmin VPN, Hamachi, ZeroTier).
-
----
-
-### 4. 🔒 100% Zero-Leak Security Architecture
-- **No hardcoded API keys, tokens, or personal identifiers.**
-- API keys and configurations are saved exclusively to local `config.json` (strictly covered in `.gitignore`).
-- Sanitized `config.example.json` provided for clean onboarding.
-
----
-
-## 📥 Installation & Download
-
-### 🚀 Direct Download (No Python Required)
-You can directly download the ready-to-use Windows `.exe` from our GitHub Releases:
-👉 **[Download Latest Auto-Minecraft-Server-Maker.exe](https://github.com/toprakahmetaydogmus/auto-minecraft-server-maker/releases/latest)**
-
----
-
-### Option A: Run from Source (Python 3.9+)
-
+### Option B: Python / PyPI Package
 ```bash
-# 1. Clone repository
+# Clone the repository
 git clone https://github.com/toprakahmetaydogmus/auto-minecraft-server-maker.git
 cd auto-minecraft-server-maker
 
-# 2. Install dependencies
+# Install dependencies
 pip install -r requirements.txt
 
-# 3. Launch application
+# Run the application
 python main.py
 ```
 
-### Option B: Build Windows Standalone `.exe` Locally
+---
 
-```bash
-# Run the 1-click compiler
-build_exe.bat
-# Output executable will be in: dist/Auto-Minecraft-Server-Maker.exe
-```
+## 🤖 12+ AI Engines & Local Models
+
+| Provider | Model Family | Key Requirement |
+|---|---|---|
+| 🦙 **Ollama (Default)** | `qwen2.5:1.5b`, `llama3.2:3b`, `mistral:7b` | **None (%100 Free & Offline)** |
+| 🛡️ **Offline Expert** | Built-in Rule & Semantic Knowledge Engine | **None (Zero Token, Instant)** |
+| 🔷 **Google Gemini** | `gemini-1.5-flash`, `gemini-1.5-pro` | Free Google AI Key |
+| 🧠 **OpenAI** | `gpt-4o`, `gpt-4o-mini` | OpenAI API Key |
+| 🪶 **Anthropic** | `claude-3-5-sonnet`, `claude-3-haiku` | Anthropic API Key |
+| ⚡ **Groq** | `llama-3.3-70b-versatile` | Groq API Key |
+| 🐋 **DeepSeek** | `deepseek-chat`, `deepseek-reasoner` | DeepSeek API Key |
+| 🟢 **NVIDIA NIM** | `meta/llama-3.1-70b-instruct` | NVIDIA NIM API Key |
+| 🌐 **OpenRouter** | 100+ Multi-Provider Models | OpenRouter API Key |
 
 ---
 
 ## 🇹🇷 Türkçe Dokümantasyon
 
-### Genel Bakış
-Auto Minecraft Server Maker, her Minecraft sürümü için (1.7.x - 1.21.x) tek tıkla otomatik sunucu kuran, 12 farklı yapay zekâ motoruyla ve **%100 Çevrimdışı / Ücretsiz Yerel AI (Ollama)** desteğiyle sunucu çökmelerini ve log hatalarını anında teşhis eden, 380+ komutluk gelişmiş Master Admin Paneli içeren profesyonel bir sunucu yönetim merkezidir.
-
-### Temel Özellikler
-1. **Tek Tıkla Kurulum**: Paper, Purpur, Fabric, Arclight (Forge+Plugin) ve Vanilla sunucuları otomatik indirir, EULA'yı onaylar, `server.properties` ve optimize `start.bat` dosyalarını üretir.
-2. **Bedrock Crossplay**: Geyser eklentisiyle mobil (iOS/Android) ve konsol oyuncularının sunucuya bağlanmasını sağlar.
-3. **🛡️ 1-Tıkla Yerel AI Hub (Offline & Ücretsiz)**: API anahtarı gerekmeden tek tıkla Ollama kurulumu (`OllamaSetup.exe`), arka planda servis başlatma (`ollama serve`) ve canlı progress bar ile model indirme (`qwen2.5:1.5b`, `llama3.2:3b`, `phi3:mini`, `mistral:7b`).
-4. **12 AI Motoru**: NVIDIA NIM, OpenRouter, OpenAI, Claude, Gemini, Groq, Mistral, Together, Perplexity, Cohere, DeepSeek ve Ollama ile çökme raporlarını okur, mod uyumsuzluklarını tespit edip adım adım çözüm sunar.
-5. **Gelişmiş Blok & Eşya Merkezi**: 300+ bloğu envantere verme, ayak altına koyma, önüne 3x3 duvar örme veya platform yapma özellikleri.
-6. **Efsanevi Master Setler**: Lvl 255 kırılmaz zırhlar, tek atan kılıçlar ve tematik Shulker sandıkları (1460 byte RCON sınırına tam uyumlu).
-7. **100% Zero-Leak Güvenlik**: API anahtarlarınız ve kişisel verileriniz asla repoya veya üçüncü taraflara aktarılmaz.
+### 🌟 Öne Çıkan Yetenekler:
+1. **Sıfır Bilgiyle Sunucu Açma:** *"1.20.1 büyü kılıç modu ve harita kur"* yazın veya senaryo çipine tıklayın. AI motoru çekirdeği (Forge), belleği ve uyumlu modları Modrinth'ten otonom olarak kurar.
+2. **Java 25 Çökme Koruması:** Forge 1.20.1 sunucularının Java 25 yüklü bilgisayarlarda verdiği `sun.misc.Unsafe` hatasını, taşınabilir **Adoptium Java 17** bağlayarak kökten çözer.
+3. **Modemsiz & Port Açmadan Arkadaşlarla Oynama:** Playit.gg ve UPnP tünelleri sayesinde modem şifrenizi bilmeden tek tıkla arkadaşlarınızın girebileceği genel IP linki üretir.
+4. **Çökmeyi Teşhis Et (Crash Doctor):** Sunucu çöktüğünde logları okur, hatanın kaynağını (çakışan mod, dolu port, yetersiz RAM) Türkçe olarak açıklar ve çözüm adımlarını listeler.
+5. **Bedrock & Java Crossplay:** Geyser & Floodgate eklentilerini tek tıkla kurarak telefon, tablet ve konsoldaki oyuncuların sunucunuza bağlanmasını sağlar.
 
 ---
 
-## 🤝 Contributing & License
-Contributions, feature requests, and PRs are welcome!
-Licensed under the [MIT License](LICENSE).
+## 🔒 100% Zero-Leak Security Architecture
+* Tüm API anahtarları, tünel token'ları ve yerel ayarlar yalnızca kullanıcının yerel makinesindeki `config.json` dosyasında tutulur.
+* Repoda hiçbir kişisel veri, parola veya gizli anahtar commitlenmez.
 
+---
+
+## 📜 Lisans
+Bu proje [MIT Lisansı](LICENSE) altında tamamen ücretsiz ve açık kaynaklıdır.
+İstediğiniz gibi kullanabilir, özelleştirebilir ve dağıtabilirsiniz!
