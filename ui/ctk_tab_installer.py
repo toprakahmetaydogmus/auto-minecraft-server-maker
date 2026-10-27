@@ -205,19 +205,20 @@ class CTkTabInstaller(ctk.CTkFrame):
         self.lbl_versions = ctk.CTkLabel(left_card, text=t("installer_version_label"), font=FONT_BOLD, text_color=COLOR_TEXT_MAIN)
         self.lbl_versions.pack(anchor="w", pady=(2, 2))
 
-        # Sürüm Kategori Filtre Butonları (Modern, Klasik, Betalar, Tümü)
+        # Sürüm Kategori Filtre Butonları (2 Satır)
         ver_cat_frame = ctk.CTkFrame(left_card, fg_color="transparent")
-        ver_cat_frame.pack(fill="x", pady=(0, 4))
+        ver_cat_frame.pack(fill="x", pady=(0, 2))
 
+        row_cat1 = ctk.CTkFrame(ver_cat_frame, fg_color="transparent")
+        row_cat1.pack(fill="x", pady=(0, 2))
         for cat_key, cat_label, cat_color in [
-            ("drops", "🔥 26.x Drops", "#f97316"),
-            ("modern", "⭐ Modern", COLOR_ACCENT_CYAN),
-            ("classic", "🏰 Klasik", COLOR_ACCENT_GOLD),
-            ("betas", "🧪 Betalar", COLOR_ACCENT_PURPLE),
-            ("all", "⚡ Tümü", COLOR_ACCENT_GREEN)
+            ("drops", "🔥 26.x", "#f97316"),
+            ("modern_121", "⭐ 1.21", COLOR_ACCENT_CYAN),
+            ("modern_120", "💎 1.20", COLOR_ACCENT_GREEN),
+            ("golden", "🌿 1.16-1.19", "#38bdf8")
         ]:
             ctk.CTkButton(
-                ver_cat_frame,
+                row_cat1,
                 text=cat_label,
                 font=("Segoe UI", 8, "bold"),
                 height=22,
@@ -226,9 +227,28 @@ class CTkTabInstaller(ctk.CTkFrame):
                 command=lambda c=cat_key: self._filter_version_category(c)
             ).pack(side="left", padx=1, expand=True, fill="x")
 
-        all_versions = ServerInstaller.get_supported_versions("modern")
+        row_cat2 = ctk.CTkFrame(ver_cat_frame, fg_color="transparent")
+        row_cat2.pack(fill="x", pady=(0, 4))
+        for cat_key, cat_label, cat_color in [
+            ("classic", "🏰 1.0-1.15", COLOR_ACCENT_GOLD),
+            ("betas", "🧪 Beta", COLOR_ACCENT_PURPLE),
+            ("alphas", "📜 Alfa", "#ec4899"),
+            ("infdev_classic", "🏛️ Klasik", "#a855f7"),
+            ("all", "⚡ Tümü", COLOR_ACCENT_GREEN)
+        ]:
+            ctk.CTkButton(
+                row_cat2,
+                text=cat_label,
+                font=("Segoe UI", 8, "bold"),
+                height=22,
+                fg_color=COLOR_BG_CARD_HOVER,
+                hover_color=cat_color,
+                command=lambda c=cat_key: self._filter_version_category(c)
+            ).pack(side="left", padx=1, expand=True, fill="x")
 
-        self.ver_var = ctk.StringVar(value=all_versions[0] if all_versions else "1.20.4")
+        all_versions = ServerInstaller.get_supported_versions("modern_121")
+
+        self.ver_var = ctk.StringVar(value=all_versions[0] if all_versions else "1.21.4 (The Garden Awakens)")
         self.ver_menu = ctk.CTkOptionMenu(
             left_card,
             variable=self.ver_var,
@@ -675,3 +695,15 @@ class CTkTabInstaller(ctk.CTkFrame):
             res = ai.analyze_log_error(console_txt[-2000:])
             self.after(0, lambda: self.log(f"\n💡 [AI REÇETESİ & ÇÖZÜM]:\n{res}\n"))
         threading.Thread(target=_doc, daemon=True).start()
+
+    def _filter_version_category(self, cat_key):
+        if cat_key == "all":
+            vers = ServerInstaller.SUPPORTED_VERSIONS
+        else:
+            vers = ServerInstaller.get_supported_versions(cat_key)
+
+        self.ver_menu.configure(values=vers)
+        if vers:
+            self.ver_var.set(vers[0])
+            self._update_java_status()
+

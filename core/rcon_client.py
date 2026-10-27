@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Minecraft RCON Client
+Minecraft RCON Client (v3.8.0 Ultra)
 Implements Source RCON Protocol with automatic reconnection, thread-safety,
-and safe chunking for Minecraft vanilla 1460-byte packet limitations.
+packet fragmentation protection (1460-byte Minecraft packet limit),
+and graceful connection state handling.
 """
 
 import socket
@@ -17,6 +18,17 @@ class MinecraftRcon:
         self.password = password
         self.sock = None
         self.lock = threading.Lock()
+
+    def check_listening(self, timeout=0.6):
+        """Checks if the RCON port is reachable without attempting full auth."""
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.settimeout(timeout)
+            s.connect((self.host, self.port))
+            s.close()
+            return True
+        except Exception:
+            return False
 
     def connect(self):
         with self.lock:
@@ -36,6 +48,9 @@ class MinecraftRcon:
                     self.sock = None
                     return False
                 return True
+            except (ConnectionRefusedError, socket.timeout, OSError):
+                self.sock = None
+                return False
             except Exception:
                 self.sock = None
                 return False
@@ -52,15 +67,21 @@ class MinecraftRcon:
                     if req_id == -1:
                         self.sock.close()
                         self.sock = None
-                        return "[Hata] RCON şifresi reddedildi."
+                        return "[Hata] RCON şifresi reddedildi. server.properties dosyasındaki rcon.password ile eşleştiğinden emin olun."
+                except (ConnectionRefusedError, OSError) as e:
+                    self.sock = None
+                    # WinError 10061 / ConnectionRefusedError handling
+                    if getattr(e, 'winerror', None) == 10061 or isinstance(e, ConnectionRefusedError):
+                        return "[Sunucu Kapalı veya Açılıyor] Minecraft sunucusu henüz başlatılmadı veya RCON portunu (25575) açıyor. Lütfen Admin Panelindeki '🚀 Sunucuyu Başlat' butonuna basarak sunucunuzu açınız; dünya yüklendiğinde bağlantı otomatik kurulacaktır."
+                    return f"[Sunucu Kapalı] Sunucuya bağlanılamadı: {e}. Lütfen sunucuyu başlatınız."
                 except Exception as e:
                     self.sock = None
-                    return f"[Bağlantı Yok] Sunucuya bağlanılamadı: {e}"
+                    return f"[Bağlantı Hatası] {e}"
 
             try:
                 self._send(2, cmd)
                 _, _, body = self._recv()
-                return body if body.strip() else "[OK] Komut iletildi."
+                return body if body.strip() else "[OK] Komut sunucuya başarıyla iletildi."
             except Exception as e:
                 self.sock = None
                 return f"[Hata] Komut iletilemedi: {e}"

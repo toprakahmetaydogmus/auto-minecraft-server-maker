@@ -4,10 +4,12 @@ Efsanevi Master Ekipmanlar, Gelişmiş Blok Dağıtım Merkezi ve 380+ Yönetici
 Completely sanitized of any personal names, IPs, or hardcoded passwords.
 """
 
+import os
+import subprocess
 import time
 import threading
 import tkinter as tk
-from tkinter import ttk, scrolledtext
+from tkinter import ttk, scrolledtext, messagebox
 from ui.theme import *
 from core.rcon_client import MinecraftRcon
 
@@ -462,6 +464,15 @@ class TabAdminPanel:
 
         self._init_rcon()
         self._build_ui()
+        self._check_initial_rcon()
+
+    def _check_initial_rcon(self):
+        def _worker():
+            if self.rcon and self.rcon.connect():
+                self.parent.after(0, lambda: self.lbl_server_status.configure(text="🟢 Sunucu ve RCON Aktif! (25565 / 25575)", fg="#34d399"))
+            else:
+                self.parent.after(0, lambda: self.lbl_server_status.configure(text="🔴 Sunucu: Beklemede | RCON: Bağlı Değil", fg="#f87171"))
+        threading.Thread(target=_worker, daemon=True).start()
 
     def _init_rcon(self):
         cfg = self.config_manager.get_server_config()
@@ -472,6 +483,28 @@ class TabAdminPanel:
         )
 
     def _build_ui(self):
+        # 0. CANLI SUNUCU & RCON KONTROL ÇUBUĞU
+        srv_bar = tk.Frame(self.frame, bg="#0b1120", height=38, padx=12, pady=4)
+        srv_bar.pack(fill=tk.X, side=tk.TOP)
+
+        self.lbl_server_status = tk.Label(srv_bar, text="🔴 Sunucu: Beklemede | RCON: Bağlı Değil", font=("Segoe UI", 8, "bold"), fg="#f87171", bg="#0b1120")
+        self.lbl_server_status.pack(side=tk.LEFT, padx=(0, 10))
+
+        self.btn_srv_start = tk.Button(srv_bar, text="🚀 Sunucuyu Başlat", font=("Segoe UI", 8, "bold"), bg=ACCENT_GREEN, fg="#000", relief=tk.FLAT, padx=8, command=self._start_server)
+        self.btn_srv_start.pack(side=tk.LEFT, padx=3)
+
+        self.btn_srv_stop = tk.Button(srv_bar, text="⏹️ Sunucuyu Durdur", font=("Segoe UI", 8, "bold"), bg="#dc2626", fg="#fff", relief=tk.FLAT, padx=8, command=self._stop_server)
+        self.btn_srv_stop.pack(side=tk.LEFT, padx=3)
+
+        self.btn_srv_restart = tk.Button(srv_bar, text="🔄 Yeniden Başlat", font=("Segoe UI", 8, "bold"), bg="#d97706", fg="#fff", relief=tk.FLAT, padx=8, command=self._restart_server)
+        self.btn_srv_restart.pack(side=tk.LEFT, padx=3)
+
+        self.btn_rcon_reconnect = tk.Button(srv_bar, text="🔌 RCON Yenile", font=("Segoe UI", 8, "bold"), bg="#0284c7", fg="#fff", relief=tk.FLAT, padx=8, command=self._reconnect_rcon)
+        self.btn_rcon_reconnect.pack(side=tk.LEFT, padx=3)
+
+        self.btn_list_players = tk.Button(srv_bar, text="👥 Oyuncu Listesi", font=("Segoe UI", 8, "bold"), bg="#6366f1", fg="#fff", relief=tk.FLAT, padx=8, command=self._list_players)
+        self.btn_list_players.pack(side=tk.LEFT, padx=3)
+
         # 1. HEDEF & ADET ŞERİDİ
         ribbon = tk.Frame(self.frame, bg="#0d1424", height=42, padx=12, pady=4)
         ribbon.pack(fill=tk.X, side=tk.TOP)
@@ -686,3 +719,77 @@ class TabAdminPanel:
     def log(self, text, tag="ok"):
         self.console.insert(tk.END, text, tag)
         self.console.see(tk.END)
+
+    def _start_server(self):
+        cfg = self.config_manager.get_server_config()
+        sdir = cfg.get("server_dir", os.path.join(os.getcwd(), "server"))
+        bat_path = os.path.join(sdir, "start.bat")
+
+        if not os.path.exists(sdir):
+            os.makedirs(sdir, exist_ok=True)
+
+        if not os.path.exists(bat_path):
+            self.log(f"[Uyarı] {bat_path} bulunamadı. Lütfen önce 'Kurulum' sekmesinden sunucunuzu kurunuz.\n", "err")
+            return
+
+        self.lbl_server_status.configure(text="🟡 Sunucu Başlatılıyor...", fg="#fbbf24")
+        self.log(f"[Sistem] Sunucu başlatılıyor ({bat_path})...\n", "cmd")
+
+        try:
+            if sys.platform == "win32":
+                subprocess.Popen(["cmd.exe", "/c", "start", "Minecraft Server", bat_path], cwd=sdir)
+            else:
+                subprocess.Popen(["bash", bat_path], cwd=sdir)
+            self._poll_rcon_auto()
+        except Exception as e:
+            self.log(f"[Hata] Sunucu başlatılamadı: {e}\n", "err")
+            self.lbl_server_status.configure(text="🔴 Başlatma Hatası", fg="#ef4444")
+
+    def _poll_rcon_auto(self, max_attempts=45):
+        def _poll():
+            for _ in range(max_attempts):
+                time.sleep(2)
+                if self.rcon and self.rcon.connect():
+                    self.parent.after(0, self._on_server_ready)
+                    return
+            self.parent.after(0, lambda: self.lbl_server_status.configure(text="🟡 Sunucu Açık (RCON bekleniyor)", fg="#fbbf24"))
+
+        threading.Thread(target=_poll, daemon=True).start()
+
+    def _on_server_ready(self):
+        self.lbl_server_status.configure(text="🟢 Sunucu ve RCON Aktif! (25565 / 25575)", fg="#34d399")
+        self.log("======================================================\n", "ok")
+        self.log("[Sistem] ✅ Minecraft Sunucusu ve RCON başarıyla bağlandı!\n", "ok")
+        self.log("Artık tüm admin butonlarını ve komutları sorunsuz kullanabilirsiniz.\n", "ok")
+        self.log("======================================================\n", "ok")
+
+    def _stop_server(self):
+        self.log("[Sistem] Sunucu durdurma komutu gönderiliyor (/stop)...\n", "cmd")
+        def _worker():
+            resp = self.rcon.send_command("stop")
+            self.parent.after(0, self.log, f"[Yanıt] {resp}\n", "ok")
+            self.parent.after(0, lambda: self.lbl_server_status.configure(text="🔴 Sunucu: Kapalı", fg="#f87171"))
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _restart_server(self):
+        self.log("[Sistem] Sunucu yeniden başlatılıyor...\n", "cmd")
+        def _worker():
+            self.rcon.send_command("stop")
+            time.sleep(4)
+            self.parent.after(0, self._start_server)
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _reconnect_rcon(self):
+        self.log("[Sistem] RCON bağlantısı test ediliyor...\n", "cmd")
+        def _worker():
+            if self.rcon and self.rcon.connect():
+                self.parent.after(0, lambda: self.lbl_server_status.configure(text="🟢 RCON Bağlandı ✔", fg="#34d399"))
+                self.parent.after(0, self.log, "[Sistem] ✅ RCON bağlantısı başarılı!\n", "ok")
+            else:
+                self.parent.after(0, lambda: self.lbl_server_status.configure(text="🔴 RCON Bağlantısı Yok", fg="#f87171"))
+                self.parent.after(0, self.log, "[Sistem] ❌ RCON portuna (25575) bağlanılamadı. Sunucu kapalı veya başlatılıyor olabilir.\n", "err")
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _list_players(self):
+        self.run_template("list")
+

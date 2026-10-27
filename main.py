@@ -104,7 +104,7 @@ class AutoMinecraftServerMakerApp(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        self.title("⚔️ Auto Minecraft Server Maker & AI Engineer Pro (v3.7.0 Ultra)")
+        self.title("⚔️ Auto Minecraft Server Maker & AI Engineer Pro (v3.8.0 Ultra)")
         self.geometry("1360x920")
         self.minsize(1180, 780)
         self.configure(fg_color=COLOR_BG_DARK)

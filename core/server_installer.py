@@ -17,7 +17,7 @@ import urllib.request
 import logging
 
 class ServerInstaller:
-    # Tüm Minecraft Sürümleri ve Güncelleme Başlıkları
+    # Tüm Minecraft Sürümleri ve Güncelleme Başlıkları (Tam Liste)
     CATEGORIZED_VERSIONS = {
         "drops": [
             "26.4 (Fourth Drop 2026 - Beklenen)",
@@ -25,54 +25,185 @@ class ServerInstaller:
             "26.2 (Chaos Cubed - Küp Kaosu)",
             "26.1 (Tiny Takeover - Küçük İstilacılar)"
         ],
-        "modern": [
-            "26.3 (Wilderness Bound)",
-            "26.2 (Chaos Cubed)",
-            "26.1 (Tiny Takeover)",
-            "1.21.4 (Tricky Trials)",
+        "modern_121": [
+            "1.21.11 (Mounts of Mayhem)",
+            "1.21.10 (The Copper Age)",
+            "1.21.9",
+            "1.21.8 (Chase the Skies)",
+            "1.21.7",
+            "1.21.6",
+            "1.21.5 (Spring to Life)",
+            "1.21.4 (The Garden Awakens)",
+            "1.21.3 (Bundles of Bravery)",
+            "1.21.2",
             "1.21.1 (Tricky Trials)",
-            "1.20.4 (Trails & Tales)",
-            "1.20.1 (Trails & Tales)",
+            "1.21 (Tricky Trials Launch)"
+        ],
+        "modern_120": [
+            "1.20.6 (Trails & Tales)",
+            "1.20.5",
+            "1.20.4 (Trails & Tales Stable)",
+            "1.20.3",
+            "1.20.2",
+            "1.20.1",
+            "1.20"
+        ],
+        "golden": [
             "1.19.4 (The Wild Update)",
+            "1.19.3",
+            "1.19.2",
+            "1.19.1",
+            "1.19",
             "1.18.2 (Caves & Cliffs II)",
+            "1.18.1",
+            "1.18",
             "1.17.1 (Caves & Cliffs I)",
-            "1.16.5 (Nether Update)"
+            "1.17",
+            "1.16.5 (Nether Update)",
+            "1.16.4",
+            "1.16.3",
+            "1.16.2",
+            "1.16.1",
+            "1.16"
         ],
         "classic": [
             "1.15.2 (Buzzy Bees)",
+            "1.15.1",
+            "1.15",
             "1.14.4 (Village & Pillage)",
+            "1.14.3",
+            "1.14.2",
+            "1.14.1",
+            "1.14",
             "1.13.2 (Update Aquatic)",
-            "1.12.2 (World of Color)",
+            "1.13.1",
+            "1.13",
+            "1.12.2 (World of Color Update)",
+            "1.12.1",
+            "1.12",
             "1.11.2 (Exploration Update)",
+            "1.11.1",
+            "1.11",
             "1.10.2 (Frostburn Update)",
+            "1.10.1",
+            "1.10",
             "1.9.4 (Combat Update)",
+            "1.9.3",
+            "1.9.2",
+            "1.9.1",
+            "1.9",
             "1.8.9 (Bountiful Update)",
-            "1.7.10 (Changed The World)",
+            "1.8.8",
+            "1.8.7",
+            "1.8.6",
+            "1.8.5",
+            "1.8.4",
+            "1.8.3",
+            "1.8.2",
+            "1.8.1",
+            "1.8",
+            "1.7.10 (The Update that Changed the World)",
+            "1.7.9",
+            "1.7.8",
+            "1.7.7",
+            "1.7.6",
+            "1.7.5",
+            "1.7.4",
+            "1.7.2",
             "1.6.4 (Horse Update)",
+            "1.6.2",
+            "1.6.1",
             "1.5.2 (Redstone Update)",
+            "1.5.1",
+            "1.5",
             "1.4.7 (Pretty Scary Update)",
-            "1.3.2 (Single & Multi Merge)",
-            "1.2.5 (Jungle & Height Limit)",
-            "1.1 (Superflat & Multi-Lang)",
-            "1.0.0 (Official Minecon Release)"
+            "1.4.6",
+            "1.4.5",
+            "1.4.4",
+            "1.4.2",
+            "1.3.2 (Villager Trading Update)",
+            "1.3.1",
+            "1.2.5 (Faithful Update)",
+            "1.2.4",
+            "1.2.3",
+            "1.2.2",
+            "1.2.1",
+            "1.1 (Spawn Egg Update)",
+            "1.0.1 (Adventure Update Part 2 - Server)",
+            "1.0.0 (Official Release)"
         ],
         "betas": [
-            "b1.8.1 (Adventure Beta)",
+            "b1.8.1 (Adventure Update Part 1)",
+            "b1.8",
             "b1.7.3 (Golden Beta Era)",
+            "b1.7.2",
+            "b1.7_01",
+            "b1.7",
             "b1.6.6",
+            "b1.6.5",
+            "b1.6.4",
+            "b1.6.3",
+            "b1.6.2",
+            "b1.6.1",
+            "b1.6",
+            "b1.5_02",
             "b1.5_01 (Weather & Rain)",
+            "b1.5",
             "b1.4_01 (Wolves & Taming)",
+            "b1.4",
             "b1.3_01 (Beds & Repeaters)",
+            "b1.3",
             "b1.2_02 (Dyes & Note Blocks)",
+            "b1.2_01",
+            "b1.2",
             "b1.1_02",
+            "b1.1_01",
+            "b1.1",
+            "b1.0.2",
+            "b1.0_01",
             "b1.0 (Beta Launch)"
+        ],
+        "alphas": [
+            "a1.2.6 (Halloween Update)",
+            "a1.2.5",
+            "a1.2.4_01",
+            "a1.2.3_05",
+            "a1.2.3_04",
+            "a1.2.3_02",
+            "a1.2.3_01",
+            "a1.2.3",
+            "a1.2.2",
+            "a1.2.1_01",
+            "a1.2.1",
+            "a1.2.0_02",
+            "a1.2.0_01",
+            "a1.2.0",
+            "a1.1.2_01",
+            "a1.1.2",
+            "a1.1.1",
+            "a1.1.0 (Seecret Friday 9)",
+            "a1.0.17_04",
+            "a1.0.17_02",
+            "a1.0.16_02",
+            "a1.0.15 (First SMP Version)",
+            "a1.0.14",
+            "a1.0.5",
+            "a1.0.4",
+            "a1.0.0"
+        ],
+        "infdev_classic": [
+            "Infdev 20100630",
+            "Infdev 20100618 (Seecret Friday 1)",
+            "Indev 20100223",
+            "Indev 0.31",
+            "c0.30 (Late Classic)"
         ]
     }
 
     # Flat list preserving unique versions
     _all_vers = []
     _seen_vers = set()
-    for _group in ["drops", "modern", "classic", "betas"]:
+    for _group in ["drops", "modern_121", "modern_120", "golden", "classic", "betas", "alphas", "infdev_classic"]:
         for _v in CATEGORIZED_VERSIONS[_group]:
             if _v not in _seen_vers:
                 _seen_vers.add(_v)
@@ -177,8 +308,8 @@ class ServerInstaller:
         st = server_type.lower()
         v_low = mc_version.lower().strip()
 
-        # 0. Check for Nostalgic Beta or Alpha Versions
-        if v_low.startswith(("b1.", "b0.", "a1.", "a0.", "c", "rd")):
+        # 0. Check for Nostalgic Beta, Alpha, Infdev, Indev, Classic Versions
+        if v_low.startswith(("b1.", "b0.", "a1.", "a0.", "c", "rd", "infdev", "indev")):
             return self._download_beta(mc_version, dest_path)
 
         try:
@@ -210,8 +341,19 @@ class ServerInstaller:
             return False
 
     def _download_beta(self, version, dest_path):
-        """Downloads nostalgic Beta / Alpha server jar from Betacraft Archive."""
-        folder = "beta" if version.startswith("b") else "alpha"
+        """Downloads nostalgic Beta / Alpha / Infdev / Indev / Classic server jar from Betacraft Archive."""
+        v_l = version.lower()
+        if v_l.startswith("b"):
+            folder = "beta"
+        elif v_l.startswith("a"):
+            folder = "alpha"
+        elif "infdev" in v_l:
+            folder = "infdev"
+        elif "indev" in v_l:
+            folder = "indev"
+        else:
+            folder = "classic"
+
         jar_names = [f"{version}.jar"]
         if "." in version and "_" not in version:
             jar_names.append(version.replace(".", "_", 1) + ".jar")
