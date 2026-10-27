@@ -25,8 +25,11 @@ class AIEngineer:
     def __init__(self, config_manager=None):
         self.config_manager = config_manager
 
-    def ask(self, prompt, system_prompt=None, provider_name=None, model=None, api_key=None):
-        """Unified query dispatcher across all 12 providers."""
+    def ask(self, prompt, system_prompt=None, provider_name=None, model=None, api_key=None, allow_fallback=True):
+        """
+        Unified query dispatcher across all 12 providers.
+        If allow_fallback is True, automatically cascades to active providers upon failure.
+        """
         if not system_prompt:
             system_prompt = (
                 "Sen kıdemli bir Minecraft Sunucu Mühendisi ve Sistem Yöneticisisin. "
@@ -58,6 +61,41 @@ class AIEngineer:
                 else:
                     model_name = "qwen2.5:1.5b"
 
+        # Primary call attempt
+        result = self._dispatch_call(provider_name, prompt, system_prompt, model_name, key, base_url)
+
+        # Autonomous Fallback Cascade: If failed and fallback enabled, try working alternatives
+        if allow_fallback and ("Hatası" in result or "Bağlantı Hatası" in result or "Connection refused" in result):
+            # 1. Try local Ollama if service is running
+            try:
+                from core.local_ai_manager import LocalAIManager
+                lm = LocalAIManager()
+                if provider_name != "Ollama (Yerel/Ücretsiz)" and lm.is_installed() and lm.ensure_service_running():
+                    models = lm.list_local_models()
+                    if models:
+                        fallback_res = self._call_openai_compatible(
+                            prompt, system_prompt, "http://127.0.0.1:11434/v1", models[0], "ollama", "Ollama (Yedek Yerel Motor)"
+                        )
+                        if not ("Hatası" in fallback_res or "Bağlantı Hatası" in fallback_res):
+                            return f"[🛡️ Otonom AI Yedek Motoru (Ollama - {models[0]}) Devreye Girdi]:\n\n{fallback_res}"
+            except Exception:
+                pass
+
+            # 2. Try any other provider that has an API key configured
+            for alt_name, alt_info in providers_dict.items():
+                if alt_name == provider_name or alt_name == "Ollama (Yerel/Ücretsiz)":
+                    continue
+                alt_key = alt_info.get("api_key", "")
+                if alt_key and not alt_key.startswith("YOUR_"):
+                    alt_res = self._dispatch_call(
+                        alt_name, prompt, system_prompt, alt_info.get("default_model", ""), alt_key, alt_info.get("base_url", "")
+                    )
+                    if not ("Hatası" in alt_res or "Bağlantı Hatası" in alt_res):
+                        return f"[🛡️ Otonom AI Yedek Motoru ({alt_name}) Devreye Girdi]:\n\n{alt_res}"
+
+        return result
+
+    def _dispatch_call(self, provider_name, prompt, system_prompt, model_name, key, base_url):
         if provider_name == "Google Gemini":
             return self._call_gemini(prompt, system_prompt, model_name, key)
         elif provider_name == "Anthropic":
@@ -65,8 +103,19 @@ class AIEngineer:
         elif provider_name == "Cohere":
             return self._call_cohere(prompt, system_prompt, model_name, key)
         else:
-            # Standard OpenAI-compatible format (NVIDIA NIM, OpenRouter, OpenAI, Groq, Mistral, Together, Perplexity, DeepSeek, Ollama)
             return self._call_openai_compatible(prompt, system_prompt, base_url, model_name, key, provider_name)
+
+    def diagnose_installation_error(self, server_type, version, error_details):
+        """Diagnoses installation/download failures and provides immediate actionable fix."""
+        prompt = (
+            f"Minecraft sunucusu indirilirken/kurulurken şu hata oluştu:\n"
+            f"Sunucu Yazılımı: {server_type}, Minecraft Sürümü: {version}\n"
+            f"Hata Ayrıntısı:\n```\n{error_details}\n```\n\n"
+            f"Lütfen:\n"
+            f"1. Bu hatanın neden kaynaklandığını (URL değişikliği, API kesintisi, Java sürümü vb.) açıkla.\n"
+            f"2. Kullanıcının sunucuyu sorunsuz kurabilmesi için en hızlı alternatif çözümü (örn. hangi sürümü/yazılımı seçmeli veya hangi ayna linki kullanmalı) adım adım söyle."
+        )
+        return self.ask(prompt, allow_fallback=True)
 
     def analyze_log_error(self, log_snippet, provider_name=None):
         system_prompt = (
@@ -77,7 +126,7 @@ class AIEngineer:
             "3. Gerekiyorsa silinmesi veya güncellenmesi gereken mod/ayar dosyasını belirt."
         )
         prompt = f"Aşağıdaki Minecraft sunucu hatasını/çökmesini incele ve çözüm öner:\n\n```\n{log_snippet}\n```"
-        return self.ask(prompt, system_prompt=system_prompt, provider_name=provider_name)
+        return self.ask(prompt, system_prompt=system_prompt, provider_name=provider_name, allow_fallback=True)
 
     def optimize_server(self, player_count, ram_gb, server_type, mc_version):
         system_prompt = "Sen uzman bir Minecraft performans optimizasyonu mühendisisin."
@@ -87,7 +136,8 @@ class AIEngineer:
             f"En yüksek TPS ve sıfır lag elde etmek için en ideal server.properties, "
             f"varsa paper/purpur ayarlarını ve önerilen JVM başlatma parametrelerini ver."
         )
-        return self.ask(prompt, system_prompt=system_prompt)
+        return self.ask(prompt, system_prompt=system_prompt, allow_fallback=True)
+
 
     # -------------------------------------------------------------------------
     # Provider Implementations

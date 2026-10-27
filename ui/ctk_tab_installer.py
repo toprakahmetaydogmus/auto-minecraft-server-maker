@@ -181,7 +181,20 @@ class CTkTabInstaller(ctk.CTkFrame):
             hover_color=COLOR_BORDER,
             command=lambda: self.console.delete("1.0", "end")
         )
-        btn_clear.pack(side="right")
+        btn_clear.pack(side="right", padx=(6, 0))
+
+        btn_ai_heal = ctk.CTkButton(
+            log_header,
+            text="🤖 AI ile Hatayı Çöz",
+            font=FONT_SMALL,
+            width=130,
+            height=24,
+            fg_color=COLOR_ACCENT_PURPLE,
+            hover_color="#7c3aed",
+            command=self.ai_heal_error
+        )
+        btn_ai_heal.pack(side="right")
+
 
         # Konsol Metin Kutusu
         self.console = ctk.CTkTextbox(
@@ -251,6 +264,26 @@ class CTkTabInstaller(ctk.CTkFrame):
         self.log(f"[*] Sunucu başlatılıyor: {bat_file}")
         threading.Thread(target=lambda: subprocess.Popen(["cmd.exe", "/c", "start", "", bat_file], cwd=sdir), daemon=True).start()
 
+    def ai_heal_error(self):
+        """Captures recent console logs and sends to AI for instant diagnosis & fix."""
+        raw_text = self.console.get("1.0", "end").strip()
+        lines = [line for line in raw_text.split("\n") if line.strip()]
+        recent_logs = "\n".join(lines[-40:]) if lines else "Henüz bir log çıktısı yok."
+
+        ver = self.ver_var.get()
+        flavor = self.flavor_var.get()
+
+        self.log("\n🤖 [AI Otonom Teşhis] Konsol günlükleri inceleniyor, lütfen bekleyiniz...")
+        def _worker():
+            try:
+                from core.ai_engineer import AIEngineer
+                ai = AIEngineer(self.config_manager)
+                solution = ai.diagnose_installation_error(flavor, ver, recent_logs)
+                self.after(0, self.log, f"\n💡 [AI ÇÖZÜM REÇETESİ]:\n{solution}\n")
+            except Exception as e:
+                self.after(0, self.log, f"❌ AI teşhis motoru hatası: {e}")
+        threading.Thread(target=_worker, daemon=True).start()
+
     def stop_server(self):
         cfg = self.config_manager.get_server_config()
         self.log("[*] Sunucu durdurma komutu gönderiliyor (stop)...")
@@ -264,3 +297,4 @@ class CTkTabInstaller(ctk.CTkFrame):
             res = rcon.send_command("stop")
             self.after(0, self.log, f">> {res}")
         threading.Thread(target=_stop, daemon=True).start()
+

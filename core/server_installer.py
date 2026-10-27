@@ -30,9 +30,34 @@ class ServerInstaller:
         jar_filename = f"{server_type.lower()}-{mc_version}.jar"
         jar_path = os.path.join(self.target_dir, jar_filename)
 
+        # 1. Primary Download Attempt
         success = self._download_jar(server_type, mc_version, jar_path)
+
+        # 2. Multi-tier Autonomous Mirror Fallback
         if not success:
-            self.log(f"[HATA] {server_type} {mc_version} için server jar indirilemedi.")
+            self.log(f"⚠️ {server_type} {mc_version} birincil sunucudan indirilemedi. Otonom ayna sunucular (Mirrors) deneniyor...")
+            
+            # Fallback 1: Purpur
+            if "paper" in server_type.lower():
+                self.log("🔄 Ayna 1: Purpur API deneniyor...")
+                success = self._download_purpur(mc_version, jar_path)
+            
+            # Fallback 2: Vanilla Official Mojang
+            if not success:
+                self.log("🔄 Ayna 2: Resmi Mojang CDN deneniyor...")
+                success = self._download_vanilla(mc_version, jar_path)
+
+        # 3. Autonomous AI Diagnosis if still failing
+        if not success:
+            err_msg = f"{server_type} ({mc_version}) için tüm ayna sunucu bağlantıları zaman aşımına uğradı."
+            self.log(f"❌ [HATA] {err_msg}")
+            try:
+                from core.ai_engineer import AIEngineer
+                ai = AIEngineer()
+                diag = ai.diagnose_installation_error(server_type, mc_version, err_msg)
+                self.log(f"\n🤖 [AI OTONOM KURTARMA & TEŞHİS RAPORU]:\n{diag}\n")
+            except Exception as e:
+                self.log(f"AI teşhis hatası: {e}")
             return False
 
         # eula.txt
@@ -50,13 +75,14 @@ class ServerInstaller:
         self.log(f"start.bat optimize Aikar G1GC bayrakları ile oluşturuldu ({min_ram}G - {max_ram}G).")
 
         # Geyser Crossplay (Bedrock Support)
-        if install_geyser and server_type.lower() in ["paper", "purpur", "arclight", "spigot"]:
+        if install_geyser and any(k in server_type.lower() for k in ["paper", "purpur", "arclight", "spigot", "mohist"]):
             self._install_geyser_plugin()
 
         self.log("======================================================")
         self.log(f"✅ SUNUCU HAZIR! Konum: {self.target_dir}")
         self.log("======================================================")
         return True
+
 
     def _download_jar(self, server_type, mc_version, dest_path):
         st = server_type.lower()
