@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-1-Click Plugin & Mod Hub
+1-Click Plugin & Mod Hub (v3.9.0 Ultimate)
 Autonomous downloader & installer for essential high-performance Minecraft plugins.
 Direct download from official verified CDNs and repositories.
 """
@@ -36,6 +36,14 @@ POPULAR_PLUGINS = [
         "filename": "ViaVersion.jar"
     },
     {
+        "id": "viabackwards",
+        "name": "ViaBackwards",
+        "category": "Uyumluluk",
+        "desc": "Daha eski Minecraft istemcilerinin yeni sunuculara girmesini sağlar.",
+        "url": "https://api.spiget.org/v2/resources/27448/download",
+        "filename": "ViaBackwards.jar"
+    },
+    {
         "id": "essentialsx",
         "name": "EssentialsX",
         "category": "Yönetim",
@@ -54,7 +62,7 @@ POPULAR_PLUGINS = [
     {
         "id": "vault",
         "name": "Vault",
-        "category": "Ekonomi",
+        "category": "Ekonomi & API",
         "desc": "Tüm ekonomi ve yetki eklentilerinin birbiriyle konuşmasını sağlayan temel köprü.",
         "url": "https://api.spiget.org/v2/resources/34315/download",
         "filename": "Vault.jar"
@@ -70,7 +78,7 @@ POPULAR_PLUGINS = [
     {
         "id": "chunky",
         "name": "Chunky",
-        "category": "Lag Optimizasyonu",
+        "category": "Lag Önleme",
         "desc": "Dünya chunk'larını önceden oluşturarak oyuncular gezerken oluşan lagı %95 yok eder.",
         "url": "https://api.spiget.org/v2/resources/81534/download",
         "filename": "Chunky.jar"
@@ -78,7 +86,7 @@ POPULAR_PLUGINS = [
     {
         "id": "clearlag",
         "name": "ClearLag",
-        "category": "Lag Optimizasyonu",
+        "category": "Lag Önleme",
         "desc": "Yerdeki gereksiz eşyaları ve fazla entity'leri otomatik temizler, RAM kazandırır.",
         "url": "https://api.spiget.org/v2/resources/28271/download",
         "filename": "ClearLag.jar"
@@ -92,6 +100,14 @@ POPULAR_PLUGINS = [
         "filename": "SkinsRestorer.jar"
     },
     {
+        "id": "authme",
+        "name": "AuthMe Reloaded",
+        "category": "Güvenlik & Giriş",
+        "desc": "Korsan/ücretsiz sunucularda oyuncuların hesaplarını şifreyle korur (/register, /login).",
+        "url": "https://api.spiget.org/v2/resources/6269/download",
+        "filename": "AuthMe-Reloaded.jar"
+    },
+    {
         "id": "spark",
         "name": "Spark Profiler",
         "category": "Analiz & TPS",
@@ -100,12 +116,20 @@ POPULAR_PLUGINS = [
         "filename": "spark.jar"
     },
     {
-        "id": "tab",
-        "name": "TAB (Neptunepink)",
-        "category": "Görsel",
-        "desc": "Özelleştirilebilir oyuncu listesi (TAB tuşu), rütbe tag'leri ve animasyonlar.",
-        "url": "https://api.spiget.org/v2/resources/57806/download",
-        "filename": "TAB.jar"
+        "id": "griefprevention",
+        "name": "GriefPrevention",
+        "category": "Koruma & Claim",
+        "desc": "Oyuncuların altın kürekle arazi sahiplenmesini sağlayarak sandık ve ev hırsızlığını engeller.",
+        "url": "https://api.spiget.org/v2/resources/1884/download",
+        "filename": "GriefPrevention.jar"
+    },
+    {
+        "id": "multiverse",
+        "name": "Multiverse-Core",
+        "category": "Çoklu Dünya",
+        "desc": "Birden çok dünya yönetimi (Ayrı Survival dünyası, Maden dünyası, Skyblock dünyası).",
+        "url": "https://api.spiget.org/v2/resources/390/download",
+        "filename": "Multiverse-Core.jar"
     }
 ]
 
@@ -138,7 +162,7 @@ class PluginModHub:
 
         self.log(f"'{plugin_info['name']}' indiriliyor...")
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"})
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AutoMinecraftServerMaker/3.9.0"})
             with urllib.request.urlopen(req, timeout=45) as resp, open(dest_path, "wb") as out:
                 total = int(resp.headers.get("Content-Length", 0))
                 downloaded = 0
