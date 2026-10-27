@@ -34,6 +34,8 @@ def build():
         "--noconsole",
         "--clean",
         "--collect-all=customtkinter",
+        "--collect-all=PIL",
+        "--hidden-import=PIL._tkinter_finder",
         "--add-data=ui;ui",
         "--add-data=core;core",
         "main.py"

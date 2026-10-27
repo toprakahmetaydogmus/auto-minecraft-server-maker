@@ -17,8 +17,13 @@ REQUIRED_PACKAGES = {
 
 def ensure_dependencies():
     """Checks and automatically installs missing dependencies via pip."""
+    # Never attempt pip installs inside a packaged PyInstaller frozen executable
+    if getattr(sys, "frozen", False):
+        return True
+
     missing = []
     for mod_name, pkg_spec in REQUIRED_PACKAGES.items():
+
         try:
             importlib.import_module(mod_name)
         except ImportError:
