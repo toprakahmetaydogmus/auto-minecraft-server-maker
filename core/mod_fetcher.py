@@ -61,7 +61,11 @@ class ModFetcher:
         try:
             self.log_callback(f"[AI Mod Yöneticisi] {message}")
         except Exception:
-            pass
+            try:
+                safe_msg = f"[AI Mod Yoneticisi] {message}".encode("ascii", "replace").decode("ascii")
+                self.log_callback(safe_msg)
+            except Exception:
+                pass
 
     def _normalize_loader(self, loader):
         raw = str(loader).lower().strip()

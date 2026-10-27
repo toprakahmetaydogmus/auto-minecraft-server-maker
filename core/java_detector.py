@@ -149,8 +149,18 @@ class JavaDetector:
         Guarantees that Java 25 is never assigned to 1.18 - 1.20.4 Forge/Arclight servers.
         Returns the absolute path to java.exe.
         """
-        log = log_callback or print
         rec_ver = JavaDetector.get_recommended_java_for_mc(mc_version)
+        raw_log = log_callback or print
+
+        def log(msg):
+            try:
+                raw_log(msg)
+            except Exception:
+                try:
+                    clean = msg.encode("ascii", "replace").decode("ascii")
+                    raw_log(clean)
+                except Exception:
+                    pass
 
         # 1. Check local portable runtime in tools/java/jre-{rec_ver}/bin/java.exe
         # Also check root tools dir
