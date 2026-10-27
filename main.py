@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-⚔️ AUTO MINECRAFT SERVER MAKER & AI ENGINEER PRO (v3.2.0 ULTRA)
+⚔️ AUTO MINECRAFT SERVER MAKER & AI ENGINEER PRO (v3.5.0 ULTRA)
 ===================================================================================
 - Autonomous Minecraft Server Creator (10+ Flavors: Paper, Purpur, Fabric, Forge, NeoForge, Arclight, Mohist, Velocity, Vanilla, BDS)
 - 12+ AI Engines Integrated (NVIDIA NIM, OpenRouter, OpenAI, Claude, Gemini, Groq, Mistral, Together, Perplexity, Cohere, DeepSeek, Ollama)
@@ -23,10 +23,14 @@ import traceback
 
 # 1. Critical protection for PyInstaller --noconsole where stdout/stderr are None
 class NullWriter:
+    encoding = "utf-8"
+    errors = "replace"
     def write(self, s):
         pass
     def flush(self):
         pass
+    def isatty(self):
+        return False
 
 if sys.stdout is None:
     sys.stdout = NullWriter()
@@ -50,18 +54,20 @@ def fatal_excepthook(exc_type, exc_value, exc_traceback):
 
 sys.excepthook = fatal_excepthook
 
-# 3. Single-Instance Mutex Socket (Prevents duplicate instances from choking the PC)
+# 3. Single-Instance Mutex Protection (Non-blocking fallback to avoid ephemeral port collisions)
 _single_instance_socket = None
 def acquire_single_instance_lock():
     global _single_instance_socket
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.bind(("127.0.0.1", 49152))
-        s.listen(1)
-        _single_instance_socket = s
-        return True
-    except OSError:
-        return False
+    for p in [49152, 49153, 49154]:
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.bind(("127.0.0.1", p))
+            s.listen(1)
+            _single_instance_socket = s
+            return True
+        except OSError:
+            continue
+    return True
 
 # 4. Autonomous Dependency Bootstrap (Self-installs missing packages in dev mode only)
 try:
@@ -98,7 +104,7 @@ class AutoMinecraftServerMakerApp(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        self.title("⚔️ Auto Minecraft Server Maker & AI Engineer Pro (v3.4.0 Ultra)")
+        self.title("⚔️ Auto Minecraft Server Maker & AI Engineer Pro (v3.5.0 Ultra)")
         self.geometry("1360x920")
         self.minsize(1180, 780)
         self.configure(fg_color=COLOR_BG_DARK)
@@ -363,6 +369,8 @@ def main():
     except Exception as e:
         import traceback
         err_msg = f"Uygulama çalışırken beklenmedik bir hata oluştu:\n\n{e}\n\nDetay:\n{traceback.format_exc()}"
+        with open("crash_reason.log", "w", encoding="utf-8") as f:
+            f.write(err_msg)
         try:
             messagebox.showerror("Kritik Hata", err_msg)
         except Exception:

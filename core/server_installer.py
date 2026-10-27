@@ -16,19 +16,32 @@ import urllib.request
 import logging
 
 class ServerInstaller:
-    # Tüm Minecraft Sürümleri (En Yeniden En Eskiye)
-    SUPPORTED_VERSIONS = [
-        "1.21.4", "1.21.3", "1.21.1", "1.21.0",
-        "1.20.6", "1.20.4", "1.20.2", "1.20.1",
-        "1.19.4", "1.19.2", "1.18.2", "1.17.1",
-        "1.16.5", "1.15.2", "1.14.4", "1.13.2",
-        "1.12.2", "1.11.2", "1.10.2", "1.9.4",
-        "1.8.9", "1.8.8", "1.7.10", "1.6.4",
-        "1.5.2", "1.4.7", "1.2.5", "1.0.0"
-    ]
+    # Tüm Minecraft Sürümleri (En Popülerden Betalara Kadar)
+    CATEGORIZED_VERSIONS = {
+        "modern": [
+            "1.21.4", "1.21.3", "1.21.1", "1.21.0",
+            "1.20.6", "1.20.4", "1.20.2", "1.20.1",
+            "1.19.4", "1.19.2", "1.18.2", "1.17.1", "1.16.5"
+        ],
+        "classic": [
+            "1.15.2", "1.14.4", "1.13.2", "1.12.2",
+            "1.11.2", "1.10.2", "1.9.4", "1.8.9",
+            "1.8.8", "1.7.10", "1.6.4", "1.5.2",
+            "1.4.7", "1.2.5", "1.1", "1.0.0"
+        ],
+        "betas": [
+            "b1.8.1", "b1.8", "b1.7.3", "b1.7.2",
+            "b1.6.6", "b1.5_01", "b1.4_01", "b1.3_01",
+            "b1.2_02", "b1.1_02", "b1.0"
+        ]
+    }
+
+    SUPPORTED_VERSIONS = CATEGORIZED_VERSIONS["modern"] + CATEGORIZED_VERSIONS["classic"] + CATEGORIZED_VERSIONS["betas"]
 
     @classmethod
-    def get_supported_versions(cls):
+    def get_supported_versions(cls, category=None):
+        if category and category in cls.CATEGORIZED_VERSIONS:
+            return cls.CATEGORIZED_VERSIONS[category]
         return cls.SUPPORTED_VERSIONS
 
     def __init__(self, target_dir, log_callback=None, progress_callback=None):
@@ -110,6 +123,12 @@ class ServerInstaller:
 
     def _download_jar(self, server_type, mc_version, dest_path):
         st = server_type.lower()
+        v_low = mc_version.lower().strip()
+
+        # 0. Check for Nostalgic Beta or Alpha Versions
+        if v_low.startswith("b1.") or v_low.startswith("a1.") or v_low.startswith("c") or v_low.startswith("rd"):
+            return self._download_beta(mc_version, dest_path)
+
         try:
             if "paper" in st:
                 return self._download_paper(mc_version, dest_path)
@@ -137,6 +156,22 @@ class ServerInstaller:
         except Exception as e:
             self.log(f"İndirme hatası: {e}")
             return False
+
+    def _download_beta(self, version, dest_path):
+        self.log(f"Minecraft Nostalji Arşivi taranıyor ({version})...")
+        urls = [
+            f"https://files.betacraft.uk/server-archive/beta/{version}.jar",
+            f"https://files.betacraft.uk/server-archive/alpha/{version}.jar"
+        ]
+        for u in urls:
+            try:
+                self.log(f"İndiriliyor: {u}")
+                self._download_file(u, dest_path)
+                return True
+            except Exception:
+                pass
+        self.log(f"Betacraft'ta {version} bulunamadı, Mojang Vanilla deneniyor...")
+        return self._download_vanilla(version, dest_path)
 
     def _download_mohist(self, version, dest_path):
         self.log(f"MohistMC API sorgulanıyor ({version})...")

@@ -125,7 +125,8 @@ class CTkTabInstaller(ctk.CTkFrame):
             ("🚀 1.20.4 Fabric", "Arkadaşlarla 1.20.4 hafif Fabric modlu sunucu kur 4GB RAM"),
             ("📱 1.21.1 Crossplay", "1.21.1 Bedrock ve Java mobil crossplay Geyser sunucusu kur"),
             ("⚔️ 1.16.5 PvP", "1.16.5 PvP klan ve faction sunucusu kur"),
-            ("🏰 1.8.9 Bedwars", "1.8.9 klasik PvP ve Bedwars sunucusu kur 2GB RAM")
+            ("🏰 1.8.9 Bedwars", "1.8.9 klasik PvP ve Bedwars sunucusu kur 2GB RAM"),
+            ("🧪 b1.7.3 Beta", "Nostaljik b1.7.3 beta sunucusu kur 2GB RAM")
         ]
 
         for chip_text, chip_prompt in chips:
@@ -198,12 +199,32 @@ class CTkTabInstaller(ctk.CTkFrame):
             self.flavor_pills[short_name] = btn
 
         # ---------------------------------------------------------------------
-        # 2. Minecraft Sürümü (En Eskiden En Yeniye + Özel Sürüm Girişi)
+        # 2. Minecraft Sürümü (Modern, Klasik, Betalar & Özel Giriş)
         # ---------------------------------------------------------------------
         self.lbl_versions = ctk.CTkLabel(left_card, text=t("installer_version_label"), font=FONT_BOLD, text_color=COLOR_TEXT_MAIN)
         self.lbl_versions.pack(anchor="w", pady=(2, 2))
 
-        all_versions = ServerInstaller.get_supported_versions()
+        # Sürüm Kategori Filtre Butonları (Modern, Klasik, Betalar, Tümü)
+        ver_cat_frame = ctk.CTkFrame(left_card, fg_color="transparent")
+        ver_cat_frame.pack(fill="x", pady=(0, 4))
+
+        for cat_key, cat_label, cat_color in [
+            ("modern", "⭐ Modern", COLOR_ACCENT_CYAN),
+            ("classic", "🏰 Klasik", COLOR_ACCENT_GOLD),
+            ("betas", "🧪 Betalar", COLOR_ACCENT_PURPLE),
+            ("all", "⚡ Tümü", COLOR_ACCENT_GREEN)
+        ]:
+            ctk.CTkButton(
+                ver_cat_frame,
+                text=cat_label,
+                font=("Segoe UI", 9, "bold"),
+                height=22,
+                fg_color=COLOR_BG_CARD_HOVER,
+                hover_color=cat_color,
+                command=lambda c=cat_key: self._filter_version_category(c)
+            ).pack(side="left", padx=1, expand=True, fill="x")
+
+        all_versions = ServerInstaller.get_supported_versions("modern")
 
         self.ver_var = ctk.StringVar(value="1.20.4")
         self.ver_menu = ctk.CTkOptionMenu(
@@ -422,6 +443,16 @@ class CTkTabInstaller(ctk.CTkFrame):
         )
         self.lbl_quick_ip.pack(side="right")
 
+    def _filter_version_category(self, cat_key):
+        if cat_key == "all":
+            v_list = ServerInstaller.get_supported_versions()
+        else:
+            v_list = ServerInstaller.get_supported_versions(cat_key)
+        self.ver_menu.configure(values=v_list)
+        if v_list:
+            self.ver_var.set(v_list[0])
+            self._update_java_status()
+
     def _on_custom_ver_changed(self, event=None):
         val = self.custom_ver_var.get().strip()
         if val:
@@ -437,25 +468,28 @@ class CTkTabInstaller(ctk.CTkFrame):
                 btn.configure(fg_color=COLOR_BG_CARD_HOVER, text_color=COLOR_TEXT_MAIN)
 
     def _update_java_status(self):
-        mc_ver = self.ver_var.get()
-        rec_j = JavaDetector.get_recommended_java_version(mc_ver)
-        sys_j = JavaDetector.get_system_java()
+        try:
+            mc_ver = self.ver_var.get()
+            rec_j = JavaDetector.get_recommended_java_version(mc_ver)
+            sys_j = JavaDetector.get_system_java()
 
-        if not sys_j or sys_j.get('version', 0) <= 0:
-            self.lbl_java_info.configure(text=f"⚠️ Java bulunamadı! (Önerilen: Java {rec_j})", text_color=COLOR_ACCENT_RED)
-            self.btn_download_java.pack(side="right", padx=10, pady=4)
-        elif sys_j['version'] < rec_j:
-            self.lbl_java_info.configure(
-                text=f"⚠️ Sistemde Java {sys_j['version']} var, {mc_ver} için Java {rec_j} gerekli!",
-                text_color=COLOR_ACCENT_GOLD
-            )
-            self.btn_download_java.pack(side="right", padx=10, pady=4)
-        else:
-            self.lbl_java_info.configure(
-                text=f"✔ Uyumlu: Java {sys_j['version']} ({mc_ver} için hazır)",
-                text_color=COLOR_ACCENT_GREEN
-            )
-            self.btn_download_java.pack_forget()
+            if not sys_j or sys_j.get('version', 0) <= 0:
+                self.lbl_java_info.configure(text=f"⚠️ Java bulunamadı! (Önerilen: Java {rec_j})", text_color=COLOR_ACCENT_RED)
+                self.btn_download_java.pack(side="right", padx=10, pady=4)
+            elif sys_j['version'] < rec_j:
+                self.lbl_java_info.configure(
+                    text=f"⚠️ Sistemde Java {sys_j['version']} var, {mc_ver} için Java {rec_j} gerekli!",
+                    text_color=COLOR_ACCENT_GOLD
+                )
+                self.btn_download_java.pack(side="right", padx=10, pady=4)
+            else:
+                self.lbl_java_info.configure(
+                    text=f"✔ Uyumlu: Java {sys_j['version']} ({mc_ver} için hazır)",
+                    text_color=COLOR_ACCENT_GREEN
+                )
+                self.btn_download_java.pack_forget()
+        except Exception as e:
+            self.lbl_java_info.configure(text=f"Java durumu: {e}", text_color=COLOR_TEXT_MUTED)
 
     def _download_recommended_java(self):
         mc_ver = self.ver_var.get()

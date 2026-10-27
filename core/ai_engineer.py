@@ -246,28 +246,35 @@ class AIEngineer:
 
         text = prompt_text.lower()
 
-        # 1. Detect Minecraft Version
-        # Matches patterns like 1.21.4, 1.20.1, 1.16.5, 1.8.9, 1.7.10, 1.12.2, 1.2.5, etc.
-        ver_match = re.search(r'\b1\.\d{1,2}(?:\.\d{1,2})?\b', text)
-        if ver_match:
-            mc_version = ver_match.group(0)
+        # 1. Detect Minecraft Version (Betas, Alphas & Releases)
+        beta_match = re.search(r'\b([ba]1\.\d{1,2}(?:[\._]\d+)?)\b', text)
+        if beta_match:
+            mc_version = beta_match.group(1)
+            server_type = "Vanilla"
         else:
-            # Check for legacy versions like 1.8, 1.7, 1.12
-            legacy_match = re.search(r'\b1\.(\d{1,2})\b', text)
-            if legacy_match:
-                sub = legacy_match.group(1)
-                if sub == "8": mc_version = "1.8.8"
-                elif sub == "7": mc_version = "1.7.10"
-                elif sub == "12": mc_version = "1.12.2"
-                elif sub == "16": mc_version = "1.16.5"
-                elif sub == "20": mc_version = "1.20.1"
-                elif sub == "21": mc_version = "1.21.1"
-                else: mc_version = f"1.{sub}.1"
+            ver_match = re.search(r'\b1\.\d{1,2}(?:\.\d{1,2})?\b', text)
+            if ver_match:
+                mc_version = ver_match.group(0)
             else:
-                mc_version = "1.20.4"
+                # Check for legacy versions like 1.8, 1.7, 1.12
+                legacy_match = re.search(r'\b1\.(\d{1,2})\b', text)
+                if legacy_match:
+                    sub = legacy_match.group(1)
+                    if sub == "8": mc_version = "1.8.8"
+                    elif sub == "7": mc_version = "1.7.10"
+                    elif sub == "12": mc_version = "1.12.2"
+                    elif sub == "16": mc_version = "1.16.5"
+                    elif sub == "20": mc_version = "1.20.1"
+                    elif sub == "21": mc_version = "1.21.1"
+                    else: mc_version = f"1.{sub}.1"
+                else:
+                    mc_version = "1.20.4"
 
         # 2. Detect Server Type / Flavor
-        server_type = "PaperMC"
+        if mc_version.startswith(("b", "a")):
+            server_type = "Vanilla"
+        else:
+            server_type = "PaperMC"
         if any(w in text for w in ["fabric", "fabrık", "fabrc"]):
             server_type = "Fabric"
         elif any(w in text for w in ["purpur", "pürpür"]):

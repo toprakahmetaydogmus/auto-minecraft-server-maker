@@ -1,10 +1,10 @@
-# ⚔️ Auto Minecraft Server Maker & AI Engineer Pro (v3.4.0 Ultra)
+# ⚔️ Auto Minecraft Server Maker & AI Engineer Pro (v3.5.0 Ultra)
 
 <div align="center">
 
 ![Python Version](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![GUI Framework](https://img.shields.io/badge/GUI-CustomTkinter%20Cyberpunk-0078D6?style=for-the-badge&logo=windows11&logoColor=white)
-![Minecraft](https://img.shields.io/badge/Minecraft-All%20Versions%20(1.0.0--1.21.4%2B)-2E7D32?style=for-the-badge&logo=minecraft&logoColor=white)
+![Minecraft](https://img.shields.io/badge/Minecraft-All%20Versions%20(Betas%20%7C%20Alphas%20%7C%201.0--1.21.4%2B)-2E7D32?style=for-the-badge&logo=minecraft&logoColor=white)
 ![Server Flavors](https://img.shields.io/badge/Flavors-10%2B%20Supported-FF6F00?style=for-the-badge&logo=apache)
 ![AI Wizard](https://img.shields.io/badge/AI%20Wizard-Autonomous%20Setup-7B1FA2?style=for-the-badge&logo=openai&logoColor=white)
 ![Localization](https://img.shields.io/badge/Language-TR%20%7C%20EN%20Bilingual-00BCD4?style=for-the-badge)
@@ -19,25 +19,23 @@
 
 ---
 
-## 🌟 Highlights & Key Features (v3.4.0 Ultra)
+## 🌟 Highlights & Key Features (v3.5.0 Ultra)
 
-### 0. 🤖 AI Autonomous Server Setup Wizard (Natural Language 1-Click Setup)
-- Type what kind of server you want in plain Turkish or English (e.g. *"Arkadaşlarımla 1.20.4 hafif Fabric oynamak istiyorum 4GB RAM ver"* or *"Setup a 1.21.1 Bedrock + Java crossplay server"*), and the AI automatically determines the optimal flavor, version, RAM, and plugins, then sets it up with 1 click!
-- Includes quick scenario chips for instant setup (Fabric Friends, Bedrock Crossplay, Competitive PvP, Classic Bedwars).
+### 0. 🛠️ 100% Crash-Resistant Startup Engine (Windows Fix)
+- Resolved all silent initialization failures; added robust `NullWriter` stream fallbacks, multi-port mutex protection, and deep exception hooks so the GUI immediately opens smoothly on every Windows PC.
 
-### 1. 🌐 Full Bilingual Architecture (TR / EN - Türkçe & English)
-- Instant 1-click language switcher (`🇹🇷 TR | 🇬🇧 EN`) in the sidebar header!
+### 1. 🧪 Comprehensive Minecraft Version Coverage (Betas, Alphas to Latest 1.21.4+)
+- **Every Era Supported**: From nostalgic Betas (`b1.0` through `b1.8.1`, `b1.7.3`) and Alphas via Betacraft preservation mirrors, to classic releases (`1.0.0` - `1.15.2`) and modern releases (`1.16.5` - `1.21.4+`) via Mojang Manifest V2!
+- **Interactive Version Filters**: Filter versions dynamically in the GUI with 4 filter pills: `⭐ Modern`, `🏰 Klasik`, `🧪 Betalar`, and `⚡ Tümü`.
+- **Intelligent Java Pairing**: Automatically pairs nostalgic Betas & Classics with Java 8, and modern versions with Java 17/21!
+
+### 2. 🤖 AI Autonomous Server Setup Wizard (Natural Language 1-Click Setup)
+- Type what kind of server you want in plain Turkish or English (e.g. *"Arkadaşlarımla b1.7.3 nostalji oynamak istiyorum"* or *"Setup a 1.21.1 Bedrock + Java crossplay server with 4GB RAM"*), and the AI automatically determines the optimal flavor, version, RAM, and plugins, then sets it up with 1 click!
+- Quick scenario chips for instant setup (Fabric Friends, Bedrock Crossplay, Competitive PvP, Classic Bedwars, Nostalgic b1.7.3 Beta).
+
+### 3. 🌐 Full Bilingual Architecture (TR / EN - Türkçe & English)
+- Instant 1-click language switcher (`🌐 TR/EN`) in the sidebar header!
 - All buttons, dialogs, banners, logs, and admin commands localized cleanly.
-
-### 2. 📌 Complete Legacy-to-Modern Version Support (1.0.0 ➔ 1.21.4+)
-- Complete version catalog from earliest release (1.0, 1.2.5, 1.5.2, 1.7.10, 1.8.9, 1.12.2) to latest (1.20.4, 1.21.1, 1.21.4+).
-- Custom version text box allows typing any custom Minecraft version, snapshot, or release!
-- Automatic fallback to Mojang Version Manifest V2 for older releases.
-- Modern Fluent Design with smooth acrylic cards, animated toggle switches, live telemetry indicators, and high-DPI scaling.
-- Self-healing autonomous dependency bootstrapper (`ensure_dependencies`): auto-installs missing packages on any PC!
-
-### 2. 🚀 Autonomous Server Creator (10+ Flavors & All Versions 1.7.x - 1.21.x)
-- **Supported Server Flavors**:
   - ⚡ **PaperMC**: Ultra-high performance Spigot fork.
   - 🟣 **Purpur**: Feature-packed, customizable Paper fork.
   - 🧵 **Fabric**: Modern, lightweight, fast modded loader.

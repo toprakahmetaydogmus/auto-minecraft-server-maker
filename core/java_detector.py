@@ -9,11 +9,16 @@ Detects installed Java JDK/JRE runtimes and matches them with Minecraft version 
 """
 
 import os
+import sys
 import re
 import subprocess
 import logging
 
 class JavaDetector:
+    @staticmethod
+    def _get_creationflags():
+        return 0x08000000 if sys.platform == "win32" else 0
+
     @staticmethod
     def get_system_java():
         """Checks default 'java' in PATH."""
@@ -23,7 +28,8 @@ class JavaDetector:
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
-                timeout=5
+                timeout=5,
+                creationflags=JavaDetector._get_creationflags()
             )
             raw = res.stderr or res.stdout
             ver = JavaDetector._parse_version(raw)
@@ -70,7 +76,8 @@ class JavaDetector:
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     text=True,
-                    timeout=5
+                    timeout=5,
+                    creationflags=JavaDetector._get_creationflags()
                 )
                 raw = res.stderr or res.stdout
                 ver = JavaDetector._parse_version(raw)
@@ -101,21 +108,35 @@ class JavaDetector:
 
     @staticmethod
     def get_recommended_java_for_mc(mc_version):
+        v = str(mc_version).lower().strip()
+        # All Beta and Alpha versions require Java 8
+        if v.startswith("b") or v.startswith("a") or v.startswith("c") or v.startswith("rd"):
+            return 8
         try:
-            parts = [int(p) for p in mc_version.split(".")[:2]]
+            parts = [int(p) for p in re.findall(r'\d+', v)]
             if len(parts) >= 2:
-                minor = parts[1]
-                if minor <= 16:
-                    return 8
-                elif minor == 17:
-                    return 16
-                elif 18 <= minor <= 20:
-                    return 17
-                else:
+                major, minor = parts[0], parts[1]
+                if major == 1:
+                    if minor <= 16:
+                        return 8
+                    elif minor == 17:
+                        return 16
+                    elif 18 <= minor <= 20:
+                        if minor == 20 and len(parts) >= 3 and parts[2] >= 5:
+                            return 21
+                        return 17
+                    else:
+                        return 21
+                elif major > 1:
                     return 21
         except Exception:
             pass
         return 17
+
+    @staticmethod
+    def get_recommended_java_version(mc_version):
+        """Unified alias for get_recommended_java_for_mc."""
+        return JavaDetector.get_recommended_java_for_mc(mc_version)
 
     @staticmethod
     def get_java_download_url(version=21):
