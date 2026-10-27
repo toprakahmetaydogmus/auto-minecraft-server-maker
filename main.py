@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-⚔️ AUTO MINECRAFT SERVER MAKER & AI ENGINEER PRO (v3.5.0 ULTRA)
+⚔️ AUTO MINECRAFT SERVER MAKER & AI ENGINEER PRO (v3.6.0 ULTRA)
 ===================================================================================
 - Autonomous Minecraft Server Creator (10+ Flavors: Paper, Purpur, Fabric, Forge, NeoForge, Arclight, Mohist, Velocity, Vanilla, BDS)
 - 12+ AI Engines Integrated (NVIDIA NIM, OpenRouter, OpenAI, Claude, Gemini, Groq, Mistral, Together, Perplexity, Cohere, DeepSeek, Ollama)
@@ -104,10 +104,19 @@ class AutoMinecraftServerMakerApp(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        self.title("⚔️ Auto Minecraft Server Maker & AI Engineer Pro (v3.5.0 Ultra)")
+        self.title("⚔️ Auto Minecraft Server Maker & AI Engineer Pro (v3.6.0 Ultra)")
         self.geometry("1360x920")
         self.minsize(1180, 780)
         self.configure(fg_color=COLOR_BG_DARK)
+
+        # Set window icon
+        try:
+            base_dir = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
+            icon_p = os.path.join(base_dir, "app_icon.ico")
+            if os.path.exists(icon_p):
+                self.iconbitmap(icon_p)
+        except Exception:
+            pass
 
         apply_global_theme(self)
 

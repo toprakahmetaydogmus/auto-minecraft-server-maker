@@ -1,4 +1,4 @@
-# ⚔️ Auto Minecraft Server Maker & AI Engineer Pro (v3.5.0 Ultra)
+# ⚔️ Auto Minecraft Server Maker & AI Engineer Pro (v3.6.0 Ultra)
 
 <div align="center">
 
@@ -19,10 +19,12 @@
 
 ---
 
-## 🌟 Highlights & Key Features (v3.5.0 Ultra)
+## 🌟 Highlights & Key Features (v3.6.0 Ultra)
 
-### 0. 🛠️ 100% Crash-Resistant Startup Engine (Windows Fix)
-- Resolved all silent initialization failures; added robust `NullWriter` stream fallbacks, multi-port mutex protection, and deep exception hooks so the GUI immediately opens smoothly on every Windows PC.
+### 0. 💎 Full Standalone Windows Executable & Metadata (v3.6.0)
+- Pre-packaged **~34 MB** self-contained Windows executable with zero external prerequisites.
+- Embedded high-resolution icon (`app_icon.ico`) and native Windows PE file version metadata (3.6.0.0).
+- 100% Crash-Resistant Startup Engine with verified non-blocking stream handlers and multi-port mutex protection.
 
 ### 1. 🧪 Comprehensive Minecraft Version Coverage (Betas, Alphas to Latest 1.21.4+)
 - **Every Era Supported**: From nostalgic Betas (`b1.0` through `b1.8.1`, `b1.7.3`) and Alphas via Betacraft preservation mirrors, to classic releases (`1.0.0` - `1.15.2`) and modern releases (`1.16.5` - `1.21.4+`) via Mojang Manifest V2!
