@@ -33,10 +33,12 @@ def build():
         "--onefile",
         "--noconsole",
         "--clean",
+        "--collect-all=customtkinter",
         "--add-data=ui;ui",
         "--add-data=core;core",
         "main.py"
     ]
+
 
     print(f"[*] Running: {' '.join(cmd)}")
     ret = subprocess.call(cmd)

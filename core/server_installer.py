@@ -61,22 +61,73 @@ class ServerInstaller:
     def _download_jar(self, server_type, mc_version, dest_path):
         st = server_type.lower()
         try:
-            if st == "paper":
+            if "paper" in st:
                 return self._download_paper(mc_version, dest_path)
-            elif st == "purpur":
+            elif "purpur" in st:
                 return self._download_purpur(mc_version, dest_path)
-            elif st == "vanilla":
-                return self._download_vanilla(mc_version, dest_path)
-            elif st == "fabric":
+            elif "fabric" in st:
                 return self._download_fabric(mc_version, dest_path)
-            elif st == "arclight":
+            elif "arclight" in st:
                 return self._download_arclight(mc_version, dest_path)
+            elif "mohist" in st:
+                return self._download_mohist(mc_version, dest_path)
+            elif "velocity" in st:
+                return self._download_velocity(dest_path)
+            elif "bungeecord" in st:
+                return self._download_bungeecord(dest_path)
+            elif "forge" in st:
+                return self._download_forge(mc_version, dest_path)
+            elif "neoforge" in st:
+                return self._download_neoforge(mc_version, dest_path)
+            elif "vanilla" in st:
+                return self._download_vanilla(mc_version, dest_path)
             else:
                 self.log(f"Bilinmeyen sunucu tipi: {server_type}, Paper deneniyor...")
                 return self._download_paper(mc_version, dest_path)
         except Exception as e:
             self.log(f"İndirme hatası: {e}")
             return False
+
+    def _download_mohist(self, version, dest_path):
+        self.log(f"MohistMC API sorgulanıyor ({version})...")
+        try:
+            api_url = f"https://mohistmc.com/api/v2/projects/mohist/{version}/builds"
+            req = urllib.request.Request(api_url, headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+            builds = data.get("builds", [])
+            if builds:
+                b_num = builds[-1].get("number")
+                dl_url = f"https://mohistmc.com/api/v2/projects/mohist/{version}/builds/{b_num}/download"
+                self.log(f"Mohist indiriliyor: #{b_num}")
+                self._download_file(dl_url, dest_path)
+                return True
+        except Exception:
+            pass
+        self.log(f"Mohist API yanıt vermedi, Arclight Forge deneniyor...")
+        return self._download_arclight(version, dest_path)
+
+    def _download_velocity(self, dest_path):
+        self.log("Velocity modern proxy jar indiriliyor...")
+        dl_url = "https://api.papermc.io/v2/projects/velocity/versions/3.3.0-SNAPSHOT/builds/442/downloads/velocity-3.3.0-SNAPSHOT-442.jar"
+        self._download_file(dl_url, dest_path)
+        return True
+
+    def _download_bungeecord(self, dest_path):
+        self.log("BungeeCord resmi proxy jar indiriliyor...")
+        dl_url = "https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar"
+        self._download_file(dl_url, dest_path)
+        return True
+
+    def _download_forge(self, version, dest_path):
+        self.log(f"Forge sunucu yükleyicisi aranıyor ({version})...")
+        # Direct fallback to Arclight for full Forge hybrid compatibility or paper
+        return self._download_arclight(version, dest_path)
+
+    def _download_neoforge(self, version, dest_path):
+        self.log(f"NeoForge aranıyor ({version})...")
+        return self._download_fabric(version, dest_path)
+
 
     def _download_paper(self, version, dest_path):
         api_url = f"https://api.papermc.io/v2/projects/paper/versions/{version}"

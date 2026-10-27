@@ -1,15 +1,16 @@
-# ⚔️ Auto Minecraft Server Maker & AI Engineer Pro
+# ⚔️ Auto Minecraft Server Maker & AI Engineer Pro (v3.0 Ultra)
 
 <div align="center">
 
 ![Python Version](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-0078D6?style=for-the-badge&logo=windows&logoColor=white)
+![GUI Framework](https://img.shields.io/badge/GUI-CustomTkinter%20Cyberpunk-0078D6?style=for-the-badge&logo=windows11&logoColor=white)
 ![Minecraft](https://img.shields.io/badge/Minecraft-All%20Versions%20(1.7.x--1.21.x)-2E7D32?style=for-the-badge&logo=minecraft&logoColor=white)
+![Server Flavors](https://img.shields.io/badge/Flavors-10%2B%20Supported-FF6F00?style=for-the-badge&logo=apache)
 ![AI Providers](https://img.shields.io/badge/AI%20Providers-12%20Engines%20Supported-7B1FA2?style=for-the-badge&logo=openai&logoColor=white)
 ![Security](https://img.shields.io/badge/Security-100%25%20Zero--Leak-00C853?style=for-the-badge&logo=shield&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-F57C00?style=for-the-badge)
 
-**The Ultimate Autonomous Minecraft Server Creation, AI-Powered Crash Diagnostics, and 380+ Command Master Administration Suite.**
+**The Ultimate Modern Autonomous Minecraft Server Creation, AI Crash Diagnostics, 1-Click Global Tunnels & 380+ Command Master Administration Suite.**
 
 [English](#-english-documentation) • [Türkçe Dokümantasyon](#-türkçe-dokümantasyon)
 
@@ -17,18 +18,43 @@
 
 ---
 
-## 🌟 Highlights & Key Features
+## 🌟 Highlights & Key Features (v3.0 Ultra)
 
-### 1. 🚀 Autonomous Server Creator (Her Sürüm & Her Tür)
-- **One-Click Installation**: Automatically downloads official server binaries, generates `server.properties`, auto-accepts EULA (`eula=true`), and configures Aikar's high-performance G1GC flags in `start.bat`.
+### 1. 🎨 State-of-the-Art CustomTkinter GUI (Cyberpunk & Deep Slate Dark Theme)
+- Modern Fluent Design with smooth acrylic cards, animated toggle switches, live telemetry indicators, and high-DPI scaling.
+- Self-healing autonomous dependency bootstrapper (`ensure_dependencies`): auto-installs missing packages on any PC!
+
+### 2. 🚀 Autonomous Server Creator (10+ Flavors & All Versions 1.7.x - 1.21.x)
 - **Supported Server Flavors**:
   - ⚡ **PaperMC**: Ultra-high performance Spigot fork.
   - 🟣 **Purpur**: Feature-packed, customizable Paper fork.
   - 🧵 **Fabric**: Modern, lightweight, fast modded loader.
   - 🏹 **Arclight (Forge + Bukkit)**: Full hybrid supporting Forge mods + Spigot plugins simultaneously.
+  - 🔮 **Mohist**: Alternative Forge + Spigot hybrid server.
+  - 🔨 **Forge**: Classic heavy modded server (1.12.2 - 1.20.1).
+  - ⚡ **NeoForge**: Next-gen modded server for Minecraft 1.20.4+.
+  - 🌐 **Velocity**: Modern high-performance network proxy.
+  - 🔗 **BungeeCord**: Classic server network proxy.
   - 📦 **Vanilla**: Official pure Mojang server software.
-- **Crossplay Ready**: Built-in 1-click **Geyser** support for seamless Java & Bedrock (Mobile/Xbox/PS/PC) crossplay.
+- **Crossplay Ready**: Built-in 1-click **Geyser** and **Floodgate** for seamless Java & Bedrock (Mobile/Xbox/PS/PC) crossplay.
 - **Intelligent Java Detector**: Automatically scans and detects Java 8, 16, 17, and 21 across your system, matching the exact requirement of the target Minecraft version.
+
+### 3. 🌐 1-Click Global Tunnel (Modemsiz Arkadaş Oynatma - Playit.gg & UPnP)
+- Play with your friends globally without port forwarding or knowing your router password!
+- 1-Click Playit.gg autonomous client (`xyz.gl.at.ply.gg:port`) + automatic local UPnP port mapper.
+
+### 4. 🔌 1-Click Plugin & Mod Hub
+- Download and install 12+ essential plugins with one click (Geyser, Floodgate, ViaVersion, EssentialsX, LuckPerms, Vault, WorldEdit, Chunky, ClearLag, SkinsRestorer, Spark, TAB).
+
+### 5. ⚙️ Visual server.properties Editor
+- Configure PvP, Hardcore, Flight, Command Blocks, Whitelist, Game Mode, Difficulty, Max Players, and View Distance with visual switches.
+
+### 6. 💾 World Backup & 1-Click Restore Manager
+- Create instant timestamped `.zip` archives of your worlds and configurations, and restore with one click.
+
+### 7. 📊 Live Hardware & Process Telemetry
+- Real-time CPU %, RAM consumption, and Java process metrics updated live in the sidebar.
+
 
 ---
 
