@@ -16,6 +16,21 @@ import urllib.request
 import logging
 
 class ServerInstaller:
+    # Tüm Minecraft Sürümleri (En Yeniden En Eskiye)
+    SUPPORTED_VERSIONS = [
+        "1.21.4", "1.21.3", "1.21.1", "1.21.0",
+        "1.20.6", "1.20.4", "1.20.2", "1.20.1",
+        "1.19.4", "1.19.2", "1.18.2", "1.17.1",
+        "1.16.5", "1.15.2", "1.14.4", "1.13.2",
+        "1.12.2", "1.11.2", "1.10.2", "1.9.4",
+        "1.8.9", "1.8.8", "1.7.10", "1.6.4",
+        "1.5.2", "1.4.7", "1.2.5", "1.0.0"
+    ]
+
+    @classmethod
+    def get_supported_versions(cls):
+        return cls.SUPPORTED_VERSIONS
+
     def __init__(self, target_dir, log_callback=None, progress_callback=None):
         self.target_dir = os.path.abspath(target_dir)
         self.log_callback = log_callback or print
@@ -167,18 +182,22 @@ class ServerInstaller:
     def _download_paper(self, version, dest_path):
         api_url = f"https://api.papermc.io/v2/projects/paper/versions/{version}"
         self.log(f"PaperMC API sorgulanıyor: {api_url}")
-        req = urllib.request.Request(api_url, headers={"User-Agent": "AutoMinecraftServerMaker/1.0"})
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-        builds = data.get("builds", [])
-        if not builds:
-            self.log(f"Bu sürüm için Paper yapısı bulunamadı: {version}")
-            return False
-        latest_build = builds[-1]
-        dl_url = f"https://api.papermc.io/v2/projects/paper/versions/{version}/builds/{latest_build}/downloads/paper-{version}-{latest_build}.jar"
-        self.log(f"İndiriliyor: Paper #{latest_build} ({dl_url})")
-        self._download_file(dl_url, dest_path)
-        return True
+        try:
+            req = urllib.request.Request(api_url, headers={"User-Agent": "AutoMinecraftServerMaker/1.0"})
+            with urllib.request.urlopen(req, timeout=12) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+            builds = data.get("builds", [])
+            if builds:
+                latest_build = builds[-1]
+                dl_url = f"https://api.papermc.io/v2/projects/paper/versions/{version}/builds/{latest_build}/downloads/paper-{version}-{latest_build}.jar"
+                self.log(f"İndiriliyor: Paper #{latest_build} ({dl_url})")
+                self._download_file(dl_url, dest_path)
+                return True
+        except Exception:
+            pass
+
+        self.log(f"PaperMC'de {version} bulunamadı veya 1.8.8 öncesi bir sürüm. Otonom Mojang Vanilla kaynağına geçiliyor...")
+        return self._download_vanilla(version, dest_path)
 
     def _download_purpur(self, version, dest_path):
         dl_url = f"https://api.purpurmc.org/v2/purpur/{version}/latest/download"

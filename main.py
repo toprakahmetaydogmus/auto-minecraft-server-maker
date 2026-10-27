@@ -78,6 +78,7 @@ from ui.theme import apply_global_theme
 from core.config_manager import ConfigManager
 from core.lan_broadcaster import LanBroadcaster
 from core.hardware_monitor import HardwareMonitor
+from core.i18n import t, I18n
 
 from ui.ctk_tab_installer import CTkTabInstaller
 from ui.ctk_tab_ai_engineer import CTkTabAIEngineer
@@ -97,7 +98,7 @@ class AutoMinecraftServerMakerApp(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        self.title("⚔️ Auto Minecraft Server Maker & AI Engineer Pro (v3.2.0 Ultra)")
+        self.title("⚔️ Auto Minecraft Server Maker & AI Engineer Pro (v3.4.0 Ultra)")
         self.geometry("1360x920")
         self.minsize(1180, 780)
         self.configure(fg_color=COLOR_BG_DARK)
@@ -108,6 +109,10 @@ class AutoMinecraftServerMakerApp(ctk.CTk):
         self.lan_broadcaster = None
         self.active_tab_btn = None
         self.tabs = {}
+
+        # Restore language preference
+        saved_lang = self.config_manager.get_server_config().get("language", "tr")
+        I18n.set_language(saved_lang)
 
         self._build_layout()
         self._start_background_workers()
@@ -125,15 +130,33 @@ class AutoMinecraftServerMakerApp(ctk.CTk):
 
         # Sidebar Logo / Başlık Kartı
         logo_f = ctk.CTkFrame(self.sidebar, fg_color="transparent")
-        logo_f.pack(fill="x", padx=16, pady=(16, 10))
+        logo_f.pack(fill="x", padx=16, pady=(16, 8))
+
+        # Üst Dil Seçim Butonu
+        top_row = ctk.CTkFrame(logo_f, fg_color="transparent")
+        top_row.pack(fill="x", pady=(0, 4))
 
         ctk.CTkLabel(
-            logo_f,
-            text="⚡ AUTO MINECRAFT",
+            top_row,
+            text="⚡ AUTO MC",
             font=FONT_TITLE,
             text_color=COLOR_ACCENT_CYAN,
             anchor="w"
-        ).pack(anchor="w")
+        ).pack(side="left")
+
+        self.btn_lang = ctk.CTkButton(
+            top_row,
+            text=f"🌐 {I18n.get_language().upper()} (TR/EN)",
+            font=("Segoe UI", 9, "bold"),
+            width=84,
+            height=22,
+            fg_color="#1e293b",
+            hover_color="#334155",
+            text_color=COLOR_ACCENT_GOLD,
+            corner_radius=11,
+            command=self._toggle_language
+        )
+        self.btn_lang.pack(side="right")
 
         ctk.CTkLabel(
             logo_f,
@@ -145,7 +168,7 @@ class AutoMinecraftServerMakerApp(ctk.CTk):
 
         ctk.CTkLabel(
             logo_f,
-            text="v3.2.0 ULTRA • Tek tıkla. Sıfır dert.",
+            text="v3.4.0 ULTRA • AI Otonom & Multilingual",
             font=FONT_SMALL,
             text_color=COLOR_ACCENT_GREEN,
             anchor="w"
@@ -165,47 +188,35 @@ class AutoMinecraftServerMakerApp(ctk.CTk):
 
         # Navigasyon Butonları & Kategorileri
         self.nav_btns = {}
-        nav_structure = [
-            ("⚡ SUNUCU & YÖNETİM", [
-                ("installer", "🚀 Sunucu Kurucu", self._show_installer),
-                ("admin", "🎮 Master Admin Paneli", self._show_admin),
-                ("properties", "⚙️ server.properties", self._show_properties),
-            ]),
-            ("🌐 GLOBAL AĞ & EKLENTİ", [
-                ("tunnel", "🌍 Global Tünel (Playit)", self._show_tunnel),
-                ("plugins", "🔌 1-Tıkla Eklenti Hub", self._show_plugins),
-                ("backup", "💾 Dünya & Yedekleme", self._show_backup),
-            ]),
-            ("🧠 YAPAY ZEKA & AYARLAR", [
-                ("ai", "🩺 AI Çökme Doktoru & Mühendis", self._show_ai),
-                ("settings", "🔑 API Kasası & Ayarlar", self._show_settings)
-            ])
+        self.nav_items_meta = [
+            ("installer", "nav_installer", self._show_installer),
+            ("admin", "nav_admin_panel", self._show_admin),
+            ("properties", "nav_properties", self._show_properties),
+            ("tunnel", "nav_tunnel", self._show_tunnel),
+            ("plugins", "nav_plugins", self._show_plugins),
+            ("backup", "nav_backup", self._show_backup),
+            ("ai", "nav_ai_engineer", self._show_ai),
+            ("settings", "nav_settings", self._show_settings)
         ]
 
-        for section_title, items in nav_structure:
-            ctk.CTkLabel(
-                self.sidebar,
-                text=section_title,
-                font=("Segoe UI", 9, "bold"),
-                text_color=COLOR_ACCENT_GOLD,
-                anchor="w"
-            ).pack(fill="x", padx=16, pady=(10, 2))
+        self.nav_frame = ctk.CTkFrame(self.sidebar, fg_color="transparent")
+        self.nav_frame.pack(fill="x", padx=12, pady=(0, 10))
 
-            for key, text, cmd in items:
-                btn = ctk.CTkButton(
-                    self.sidebar,
-                    text=text,
-                    font=FONT_BOLD,
-                    anchor="w",
-                    height=36,
-                    corner_radius=8,
-                    fg_color="transparent",
-                    text_color=COLOR_TEXT_MAIN,
-                    hover_color=COLOR_BG_CARD_HOVER,
-                    command=cmd
-                )
-                btn.pack(fill="x", padx=12, pady=2)
-                self.nav_btns[key] = btn
+        for key, i18n_key, cmd in self.nav_items_meta:
+            btn = ctk.CTkButton(
+                self.nav_frame,
+                text=t(i18n_key),
+                font=FONT_BOLD,
+                anchor="w",
+                height=36,
+                corner_radius=8,
+                fg_color="transparent",
+                text_color=COLOR_TEXT_MAIN,
+                hover_color=COLOR_BG_CARD_HOVER,
+                command=cmd
+            )
+            btn.pack(fill="x", pady=2)
+            self.nav_btns[key] = (btn, i18n_key)
 
         # Alt Donanım Telemetrisi Kartı
         tele_card = ctk.CTkFrame(self.sidebar, fg_color=COLOR_BG_CARD, corner_radius=10, border_width=1, border_color=COLOR_BORDER)
@@ -232,6 +243,20 @@ class AutoMinecraftServerMakerApp(ctk.CTk):
         # Varsayılan sekme: Sunucu Kurucu
         self._show_installer()
 
+    def _toggle_language(self):
+        cur = I18n.get_language()
+        new_lang = "en" if cur == "tr" else "tr"
+        I18n.set_language(new_lang)
+        cfg = self.config_manager.get_server_config()
+        cfg["language"] = new_lang
+        self.config_manager.save_config()
+        self.btn_lang.configure(text=f"🌐 {new_lang.upper()} (TR/EN)")
+        self._refresh_nav_labels()
+
+    def _refresh_nav_labels(self):
+        for key, (btn, i18n_key) in self.nav_btns.items():
+            btn.configure(text=t(i18n_key))
+
     def _switch_tab(self, key):
         # Lazy Loading: Sadece tıklandığında sekme örneğini oluştur
         if key not in self.tabs:
@@ -249,14 +274,15 @@ class AutoMinecraftServerMakerApp(ctk.CTk):
                 self.tabs[key] = tab_factories[key]()
 
         for k, view in self.tabs.items():
+            btn = self.nav_btns[k][0] if k in self.nav_btns else None
             if k == key:
                 view.grid(row=0, column=0, sticky="nsew")
-                if k in self.nav_btns:
-                    self.nav_btns[k].configure(fg_color=COLOR_ACCENT_CYAN, text_color="#000000")
+                if btn:
+                    btn.configure(fg_color=COLOR_ACCENT_CYAN, text_color="#000000")
             else:
                 view.grid_forget()
-                if k in self.nav_btns:
-                    self.nav_btns[k].configure(fg_color="transparent", text_color=COLOR_TEXT_MAIN)
+                if btn:
+                    btn.configure(fg_color="transparent", text_color=COLOR_TEXT_MAIN)
 
     def _show_installer(self): self._switch_tab("installer")
     def _show_ai(self): self._switch_tab("ai")

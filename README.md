@@ -1,16 +1,17 @@
-# ⚔️ Auto Minecraft Server Maker & AI Engineer Pro (v3.0 Ultra)
+# ⚔️ Auto Minecraft Server Maker & AI Engineer Pro (v3.4.0 Ultra)
 
 <div align="center">
 
 ![Python Version](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![GUI Framework](https://img.shields.io/badge/GUI-CustomTkinter%20Cyberpunk-0078D6?style=for-the-badge&logo=windows11&logoColor=white)
-![Minecraft](https://img.shields.io/badge/Minecraft-All%20Versions%20(1.7.x--1.21.x)-2E7D32?style=for-the-badge&logo=minecraft&logoColor=white)
+![Minecraft](https://img.shields.io/badge/Minecraft-All%20Versions%20(1.0.0--1.21.4%2B)-2E7D32?style=for-the-badge&logo=minecraft&logoColor=white)
 ![Server Flavors](https://img.shields.io/badge/Flavors-10%2B%20Supported-FF6F00?style=for-the-badge&logo=apache)
-![AI Providers](https://img.shields.io/badge/AI%20Providers-12%20Engines%20Supported-7B1FA2?style=for-the-badge&logo=openai&logoColor=white)
+![AI Wizard](https://img.shields.io/badge/AI%20Wizard-Autonomous%20Setup-7B1FA2?style=for-the-badge&logo=openai&logoColor=white)
+![Localization](https://img.shields.io/badge/Language-TR%20%7C%20EN%20Bilingual-00BCD4?style=for-the-badge)
 ![Security](https://img.shields.io/badge/Security-100%25%20Zero--Leak-00C853?style=for-the-badge&logo=shield&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-F57C00?style=for-the-badge)
 
-**The Ultimate Modern Autonomous Minecraft Server Creation, AI Crash Diagnostics, 1-Click Global Tunnels & 380+ Command Master Administration Suite.**
+**The Ultimate Autonomous Minecraft Server Creator, AI Setup Wizard, Crash Diagnostics, 1-Click Global Tunnels & 380+ Command Master Administration Suite.**
 
 [English](#-english-documentation) • [Türkçe Dokümantasyon](#-türkçe-dokümantasyon)
 
@@ -18,9 +19,20 @@
 
 ---
 
-## 🌟 Highlights & Key Features (v3.0 Ultra)
+## 🌟 Highlights & Key Features (v3.4.0 Ultra)
 
-### 1. 🎨 State-of-the-Art CustomTkinter GUI (Cyberpunk & Deep Slate Dark Theme)
+### 0. 🤖 AI Autonomous Server Setup Wizard (Natural Language 1-Click Setup)
+- Type what kind of server you want in plain Turkish or English (e.g. *"Arkadaşlarımla 1.20.4 hafif Fabric oynamak istiyorum 4GB RAM ver"* or *"Setup a 1.21.1 Bedrock + Java crossplay server"*), and the AI automatically determines the optimal flavor, version, RAM, and plugins, then sets it up with 1 click!
+- Includes quick scenario chips for instant setup (Fabric Friends, Bedrock Crossplay, Competitive PvP, Classic Bedwars).
+
+### 1. 🌐 Full Bilingual Architecture (TR / EN - Türkçe & English)
+- Instant 1-click language switcher (`🇹🇷 TR | 🇬🇧 EN`) in the sidebar header!
+- All buttons, dialogs, banners, logs, and admin commands localized cleanly.
+
+### 2. 📌 Complete Legacy-to-Modern Version Support (1.0.0 ➔ 1.21.4+)
+- Complete version catalog from earliest release (1.0, 1.2.5, 1.5.2, 1.7.10, 1.8.9, 1.12.2) to latest (1.20.4, 1.21.1, 1.21.4+).
+- Custom version text box allows typing any custom Minecraft version, snapshot, or release!
+- Automatic fallback to Mojang Version Manifest V2 for older releases.
 - Modern Fluent Design with smooth acrylic cards, animated toggle switches, live telemetry indicators, and high-DPI scaling.
 - Self-healing autonomous dependency bootstrapper (`ensure_dependencies`): auto-installs missing packages on any PC!
 

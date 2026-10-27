@@ -365,10 +365,17 @@ TABS_DATA = {
         ("🎈 Sonsuz Havaya Uçur (Levitation)", "effect give {p} levitation 15 5 true", "Gökyüzüne uçurur"),
         ("🔊 Creeper Tıslaması (Jumpscare)", "playsound minecraft:entity.creeper.primed master {p} ~ ~ ~ 10 1", "Arkasında creeper patlayacakmış gibi ses çalar"),
         ("👹 Warden Çığlığı", "playsound minecraft:entity.warden.emerge master {p} ~ ~ ~ 10 1", "Warden çıkış çığlığı çalar"),
+        ("🐲 Ejderha Kükremesi", "playsound minecraft:entity.ender_dragon.growl master {p} ~ ~ ~ 10 1", "Kulağında dev ejderha kükremesi patlatır"),
+        ("💀 Wither Patlama Sesi", "playsound minecraft:entity.wither.spawn master {p} ~ ~ ~ 10 1", "Wither doğma patlama efekti"),
+        ("🧨 Sahte Nükleer Patlama Parçacığı", "execute at {p} run particle huge_explosion ~ ~ ~ 1 1 1 0 10", "Görsel dev nükleer patlama efekti basar"),
+        ("🧲 Baş Aşağı Çevir (Dinnerbone)", 'give {p} name_tag{display:{Name:\'{"text":"Dinnerbone"}\'}} 1', "Dinnerbone isim etiketi verir"),
+        ("💔 Canını Yarım Kalbe İndir", "effect give {p} poison 5 255 true", "Canını tek dokunuşluk seviyeye düşürür"),
+        ("🍖 Açlık Krizine Sok", "effect give {p} hunger 30 255 true", "Açlık barını sıfıra indirir"),
         ("🎒 Envanterini Tamamen Boşalt", "clear {p}", "Tüm envanterini temizler")
     ],
     "⚙️ REDSTONE & MEKANİZMA": [
         ("🧨 64x TNT Bloğu", "give {p} tnt {qty}", "Patlayıcı TNT"),
+        ("🛒 16x TNT Vagonu", "give {p} tnt_minecart {qty}", "Rayda anında patlayan vagon"),
         ("🟩 64x Balçık Bloğu (Slime)", "give {p} slime_block {qty}", "Zıplatan balçık"),
         ("🍯 64x Bal Bloğu (Honey)", "give {p} honey_block {qty}", "Yapışkan bal"),
         ("🦾 64x Yapışkan Piston", "give {p} sticky_piston {qty}", "Piston"),
@@ -408,6 +415,31 @@ TABS_DATA = {
         ("💥 Creeper Hasarını Aç", "gamerule mobGriefing true", "Creeper blok kırabilir"),
         ("💾 Dünyayı Şimdi Kaydet", "save-all flush", "Diske kaydeder"),
         ("📢 Sunucuya Altın Başlık Bas", 'title @a title {"text":"Sunucu Aktif!","color":"gold","bold":true}', "Ekrana duyuru basar")
+    ],
+    "🥚 CANAVAR & MOB YUMURTALARI": [
+        ("🧟 16x Zombi Yumurtası", "give {p} zombie_spawn_egg {qty}", "Zombi çağırma yumurtası"),
+        ("💀 16x İskelet Yumurtası", "give {p} skeleton_spawn_egg {qty}", "İskelet çağırma yumurtası"),
+        ("💥 16x Creeper Yumurtası", "give {p} creeper_spawn_egg {qty}", "Creeper yumurtası"),
+        ("🕷️ 16x Örümcek Yumurtası", "give {p} spider_spawn_egg {qty}", "Örümcek çağırma"),
+        ("👁️ 16x Enderman Yumurtası", "give {p} enderman_spawn_egg {qty}", "Enderman çağırma"),
+        ("🧙 16x Cadı Yumurtası", "give {p} witch_spawn_egg {qty}", "Cadı çağırma"),
+        ("🔥 16x Blaze Yumurtası", "give {p} blaze_spawn_egg {qty}", "Nether Blaze"),
+        ("👻 16x Ghast Yumurtası", "give {p} ghast_spawn_egg {qty}", "Uçan Ghast"),
+        ("🐷 16x Piglin Yumurtası", "give {p} piglin_spawn_egg {qty}", "Nether Piglin"),
+        ("👹 16x Warden Yumurtası", "give {p} warden_spawn_egg {qty}", "Korkunç Warden"),
+        ("🧑‍🌾 16x Köylü Yumurtası", "give {p} villager_spawn_egg {qty}", "Ticaret köylüsü"),
+        ("🤖 16x Demir Golem Yumurtası", "give {p} iron_golem_spawn_egg {qty}", "Koruyucu Demir Golem"),
+        ("🐕 16x Kurt Yumurtası", "give {p} wolf_spawn_egg {qty}", "Sadık kurt"),
+        ("🐈 16x Kedi Yumurtası", "give {p} cat_spawn_egg {qty}", "Creeper kovan kedi"),
+        ("🐎 16x At Yumurtası", "give {p} horse_spawn_egg {qty}", "Binek at")
+    ],
+    "🗺️ IŞINLANMA & DÜNYA": [
+        ("📍 Dünya Merkezi (0, 100, 0)", "tp {p} 0 100 0", "Koordinat 0, 100, 0'a ışınlar"),
+        ("🌋 Nether Boyutuna Işınla", "execute in minecraft:the_nether run tp {p} 0 70 0", "Doğrudan cehenneme ışınlar"),
+        ("🌌 The End Boyutuna Işınla", "execute in minecraft:the_end run tp {p} 0 65 0", "Son boyuta ışınlar"),
+        ("🎲 Rastgele Işınlan (RTP)", "spreadplayers ~ ~ 50 1500 false {p}", "1500 blokluk rastgele konuma ışınlar"),
+        ("🏠 Doğuş Noktasını Burası Yap", "setworldspawn ~ ~ ~", "Global spawn noktasını ayarlar"),
+        ("🛏️ Kişisel Doğuş Noktası", "spawnpoint {p} ~ ~ ~", "Oyuncunun spawn noktasını belirler")
     ],
     "🐉 CANLI ÇAĞIRICI (SUMMON)": [
         ("🐲 Ender Ejderhası Çağır", "summon ender_dragon ~ ~5 ~", "Ender Dragon oluşturur"),
