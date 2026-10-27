@@ -122,12 +122,12 @@ class CTkTabInstaller(ctk.CTkFrame):
         chips_frame.pack(fill="x", padx=10, pady=(0, 8))
 
         chips = [
-            ("🔥 26.3 Yaban Hayatı", "26.3 Wilderness Bound en son stabil sunucu kur 4GB RAM"),
-            ("🚀 1.20.4 Fabric", "Arkadaşlarla 1.20.4 hafif Fabric modlu sunucu kur 4GB RAM"),
+            ("⚔️ 1.20.1 Büyü & Kılıç", "1.20.1 Forge büyü kılıç modu ve harita kur 6gb ram"),
+            ("🗺️ 1.20.4 Fabric Harita & FPS", "1.20.4 hafif Fabric harita ve optimizasyon modları kur 4gb ram"),
+            ("🧟 1.20.1 Zombi Kıyameti", "1.20.1 zombi kıyameti ve hayatta kalma modlu sunucu kur 6gb ram"),
+            ("⚙️ 1.20.1 Create & Teknoloji", "1.20.1 Forge create teknoloji ve depolama modlu sunucu kur 6gb ram"),
             ("📱 1.21.1 Crossplay", "1.21.1 Bedrock ve Java mobil crossplay Geyser sunucusu kur"),
-            ("⚔️ 1.16.5 PvP", "1.16.5 PvP klan ve faction sunucusu kur"),
-            ("🏰 1.8.9 Bedwars", "1.8.9 klasik PvP ve Bedwars sunucusu kur 2GB RAM"),
-            ("🧪 b1.7.3 Beta", "Nostaljik b1.7.3 beta sunucusu kur 2GB RAM")
+            ("🔥 26.3 En Son Sürüm", "26.3 Wilderness Bound en son stabil sunucu kur 4GB RAM")
         ]
 
         for chip_text, chip_prompt in chips:
@@ -535,6 +535,7 @@ class CTkTabInstaller(ctk.CTkFrame):
 
         # Run parser
         plan = self.ai_engineer.parse_setup_intent(prompt)
+        self.last_ai_plan = plan
 
         # Update UI Controls to match AI Plan
         self.ver_var.set(plan["mc_version"])
@@ -599,6 +600,27 @@ class CTkTabInstaller(ctk.CTkFrame):
                     server_port=s_cfg.get("port", 25565),
                     install_geyser=geyser_val
                 )
+
+                # Autonomous Safe Mod Installation via Modrinth
+                is_modded = raw_flavor in ["Forge", "Fabric", "NeoForge", "Arclight", "Mohist"] or getattr(self, "last_ai_plan", {}).get("is_modded", False)
+                if success and is_modded:
+                    try:
+                        self.log("\n=======================================================")
+                        self.log("📦 [AI OTONOM MOD YÖNETİCİSİ]: Uyumlu Modlar Yükleniyor...")
+                        self.log("=======================================================")
+                        from core.mod_fetcher import ModFetcher
+                        fetcher = ModFetcher(log_callback=self.log)
+                        prompt_to_use = getattr(self, "last_ai_plan", {}).get("raw_prompt", self.ai_prompt_var.get())
+                        mods_dir = os.path.join(server_dir, "mods")
+                        fetcher.auto_install_theme_mods(
+                            prompt=prompt_to_use,
+                            mc_version=mc_ver,
+                            loader=raw_flavor,
+                            mods_dir=mods_dir
+                        )
+                    except Exception as mod_err:
+                        self.log(f"Mod indirme uyarısı (sunucu kurulumu etkilendi): {mod_err}")
+
                 self.progress_bar.set(1.0 if success else 0)
             except Exception as e:
                 self.log(f"Kritik Kurulum Hatası: {e}")

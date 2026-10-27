@@ -241,9 +241,8 @@ class ServerInstaller:
         self.log(f"> Kurulum başlatılıyor: {server_type} {mc_version}...")
 
         from core.java_detector import JavaDetector
-        sys_j = JavaDetector.get_system_java()
-        j_ver = sys_j['version'] if sys_j and sys_j['version'] > 0 else 17
-        self.log(f"> Java {j_ver} algılandı ✔")
+        base_search = os.path.dirname(self.target_dir) if os.path.dirname(self.target_dir) else "."
+        self.java_bin = JavaDetector.ensure_compatible_java(mc_version, base_dir=base_search, log_callback=self.log)
 
         jar_filename = f"{server_type.lower()}-{mc_version}.jar"
         jar_path = os.path.join(self.target_dir, jar_filename)
@@ -615,6 +614,7 @@ sync-chunk-writes=true
             f.write(content)
 
     def _write_start_script(self, jar_filename, min_ram, max_ram, mc_version="1.20.4"):
+        os.makedirs(self.target_dir, exist_ok=True)
         bat_path = os.path.join(self.target_dir, "start.bat")
         
         # Legacy Betas/Alphas do not support modern Aikar G1GC flags
@@ -626,19 +626,41 @@ sync-chunk-writes=true
         else:
             jvm_args = f"-Xms{min_ram}G -Xmx{max_ram}G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true -jar {jar_filename} nogui"
 
-        content = f"""@echo off
-title Auto Minecraft Server ({jar_filename})
-chcp 65001 >nul
-cls
-echo =====================================================================
-echo           AUTO MINECRAFT SERVER MAKER - BASLATICI
-echo =====================================================================
-echo.
-echo [*] Sunucu Jar: {jar_filename}
-echo [*] RAM: Min {min_ram}GB - Max {max_ram}GB
-echo.
-java {jvm_args}
-pause
-"""
+        # Safe compatible Java runtime resolution
+        java_target = getattr(self, "java_bin", "")
+        if not java_target or not os.path.exists(java_target):
+            # Check relative tools path
+            rel_j17 = os.path.abspath(os.path.join(self.target_dir, "..", "tools", "java", "jre-17", "bin", "java.exe"))
+            if os.path.exists(rel_j17):
+                java_target = rel_j17
+            else:
+                java_target = "java"
+
+        content = (
+            "@echo off\r\n"
+            f"title Auto Minecraft Server ({jar_filename})\r\n"
+            "chcp 65001 >nul\r\n"
+            "cls\r\n"
+            "echo =====================================================================\r\n"
+            "echo           AUTO MINECRAFT SERVER MAKER - BASLATICI\r\n"
+            "echo =====================================================================\r\n"
+            "echo.\r\n"
+            f"echo [*] Sunucu Jar: {jar_filename}\r\n"
+            f"echo [*] RAM: Min {min_ram}GB - Max {max_ram}GB\r\n"
+            "echo.\r\n\r\n"
+            "REM Uyumlu Java Calistiricisi (Java 25 Uyumluluk Koruyucusu)\r\n"
+            "set \"JAVA_CMD=java\"\r\n"
+            f'if exist "{java_target}" (\r\n'
+            f'    set "JAVA_CMD={java_target}"\r\n'
+            ') else if exist "%~dp0..\\tools\\java\\jre-17\\bin\\java.exe" (\r\n'
+            '    set "JAVA_CMD=%~dp0..\\tools\\java\\jre-17\\bin\\java.exe"\r\n'
+            ') else if exist "%~dp0tools\\java\\jre-17\\bin\\java.exe" (\r\n'
+            '    set "JAVA_CMD=%~dp0tools\\java\\jre-17\\bin\\java.exe"\r\n'
+            ")\r\n\r\n"
+            'echo [*] Kullanilan Java: "%JAVA_CMD%"\r\n'
+            "echo.\r\n\r\n"
+            f'"%JAVA_CMD%" --add-opens java.base/sun.misc=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED {jvm_args}\r\n'
+            "pause\r\n"
+        )
         with open(bat_path, "w", encoding="utf-8") as f:
             f.write(content)

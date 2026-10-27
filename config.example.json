@@ -16,7 +16,7 @@
   },
   "ai": {
     "active_provider": "Ollama (Yerel/Ücretsiz)",
-    "active_model": "llama3",
+    "active_model": "qwen2.5:1.5b",
     "providers": {
       "NVIDIA NIM": {
         "api_key": "YOUR_NVIDIA_NIM_API_KEY",

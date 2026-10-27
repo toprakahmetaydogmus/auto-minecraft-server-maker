@@ -26,7 +26,7 @@ def compute_sha256(filepath):
 
 def build():
     print("======================================================")
-    print("   Building Auto Minecraft Server Maker (v3.9.0 Ultimate)")
+    print("   Building Auto Minecraft Server Maker (v4.0.0 Master)")
     print("======================================================")
 
     # Ensure pyinstaller is installed
@@ -60,7 +60,7 @@ def build():
     ret = subprocess.call(cmd)
     if ret == 0:
         dist_exe = os.path.join("dist", "Auto-Minecraft-Server-Maker.exe")
-        versioned_exe = os.path.join("dist", "Auto-Minecraft-Server-Maker-v3.9.0-Ultimate.exe")
+        versioned_exe = os.path.join("dist", "Auto-Minecraft-Server-Maker-v4.0.0-Master.exe")
         if os.path.exists(dist_exe):
             shutil.copy2(dist_exe, versioned_exe)
             size_mb = os.path.getsize(dist_exe) / (1024 * 1024)
