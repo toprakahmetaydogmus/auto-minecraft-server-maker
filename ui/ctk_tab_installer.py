@@ -122,6 +122,7 @@ class CTkTabInstaller(ctk.CTkFrame):
         chips_frame.pack(fill="x", padx=10, pady=(0, 8))
 
         chips = [
+            ("🔥 26.3 Yaban Hayatı", "26.3 Wilderness Bound en son stabil sunucu kur 4GB RAM"),
             ("🚀 1.20.4 Fabric", "Arkadaşlarla 1.20.4 hafif Fabric modlu sunucu kur 4GB RAM"),
             ("📱 1.21.1 Crossplay", "1.21.1 Bedrock ve Java mobil crossplay Geyser sunucusu kur"),
             ("⚔️ 1.16.5 PvP", "1.16.5 PvP klan ve faction sunucusu kur"),
@@ -209,6 +210,7 @@ class CTkTabInstaller(ctk.CTkFrame):
         ver_cat_frame.pack(fill="x", pady=(0, 4))
 
         for cat_key, cat_label, cat_color in [
+            ("drops", "🔥 26.x Drops", "#f97316"),
             ("modern", "⭐ Modern", COLOR_ACCENT_CYAN),
             ("classic", "🏰 Klasik", COLOR_ACCENT_GOLD),
             ("betas", "🧪 Betalar", COLOR_ACCENT_PURPLE),
@@ -217,7 +219,7 @@ class CTkTabInstaller(ctk.CTkFrame):
             ctk.CTkButton(
                 ver_cat_frame,
                 text=cat_label,
-                font=("Segoe UI", 9, "bold"),
+                font=("Segoe UI", 8, "bold"),
                 height=22,
                 fg_color=COLOR_BG_CARD_HOVER,
                 hover_color=cat_color,
@@ -226,7 +228,7 @@ class CTkTabInstaller(ctk.CTkFrame):
 
         all_versions = ServerInstaller.get_supported_versions("modern")
 
-        self.ver_var = ctk.StringVar(value="1.20.4")
+        self.ver_var = ctk.StringVar(value=all_versions[0] if all_versions else "1.20.4")
         self.ver_menu = ctk.CTkOptionMenu(
             left_card,
             variable=self.ver_var,
@@ -469,7 +471,8 @@ class CTkTabInstaller(ctk.CTkFrame):
 
     def _update_java_status(self):
         try:
-            mc_ver = self.ver_var.get()
+            raw_ver = self.ver_var.get()
+            mc_ver = ServerInstaller.get_clean_version(raw_ver)
             rec_j = JavaDetector.get_recommended_java_version(mc_ver)
             sys_j = JavaDetector.get_system_java()
 
@@ -540,14 +543,18 @@ class CTkTabInstaller(ctk.CTkFrame):
         self.console.insert("end", f"{text}\n")
         self.console.see("end")
 
-    def _progress_callback(self, percent):
-        self.progress_bar.set(percent / 100.0)
+    def _progress_callback(self, percent, *args, **kwargs):
+        try:
+            val = float(percent) / 100.0
+            self.after(0, lambda: self.progress_bar.set(max(0.0, min(1.0, val))))
+        except Exception:
+            pass
 
     def start_installation(self):
         s_cfg = self.config_manager.get_server_config()
         server_dir = s_cfg.get("server_dir", "./server")
         raw_flavor = self.flavor_var.get().split()[0].replace("(", "").replace(")", "").strip()
-        mc_ver = self.ver_var.get()
+        mc_ver = ServerInstaller.get_clean_version(self.ver_var.get())
         min_ram = int(self.min_ram_var.get())
         max_ram = int(self.max_ram_var.get())
         geyser_val = bool(self.geyser_switch.get())

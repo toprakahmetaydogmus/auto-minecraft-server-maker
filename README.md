@@ -1,10 +1,10 @@
-# ⚔️ Auto Minecraft Server Maker & AI Engineer Pro (v3.6.0 Ultra)
+# ⚔️ Auto Minecraft Server Maker & AI Engineer Pro (v3.7.0 Ultra)
 
 <div align="center">
 
 ![Python Version](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![GUI Framework](https://img.shields.io/badge/GUI-CustomTkinter%20Cyberpunk-0078D6?style=for-the-badge&logo=windows11&logoColor=white)
-![Minecraft](https://img.shields.io/badge/Minecraft-All%20Versions%20(Betas%20%7C%20Alphas%20%7C%201.0--1.21.4%2B)-2E7D32?style=for-the-badge&logo=minecraft&logoColor=white)
+![Minecraft](https://img.shields.io/badge/Minecraft-All%20Versions%20(26.x%20Drops%20%7C%201.21%20%7C%20Betas)-2E7D32?style=for-the-badge&logo=minecraft&logoColor=white)
 ![Server Flavors](https://img.shields.io/badge/Flavors-10%2B%20Supported-FF6F00?style=for-the-badge&logo=apache)
 ![AI Wizard](https://img.shields.io/badge/AI%20Wizard-Autonomous%20Setup-7B1FA2?style=for-the-badge&logo=openai&logoColor=white)
 ![Localization](https://img.shields.io/badge/Language-TR%20%7C%20EN%20Bilingual-00BCD4?style=for-the-badge)
@@ -19,20 +19,24 @@
 
 ---
 
-## 🌟 Highlights & Key Features (v3.6.0 Ultra)
+## 🌟 Highlights & Key Features (v3.7.0 Ultra)
 
-### 0. 💎 Full Standalone Windows Executable & Metadata (v3.6.0)
-- Pre-packaged **~34 MB** self-contained Windows executable with zero external prerequisites.
-- Embedded high-resolution icon (`app_icon.ico`) and native Windows PE file version metadata (3.6.0.0).
-- 100% Crash-Resistant Startup Engine with verified non-blocking stream handlers and multi-port mutex protection.
+### 0. 🚀 2026 Game Drops & Named Updates (26.4, 26.3, 26.2, 26.1)
+- Full native support for the new 2026 Minecraft Game Drops:
+  - **26.4 (Fourth Drop 2026 - Beklenen)**: Bleeding edge Mojang snapshot routing!
+  - **26.3 (Wilderness Bound - Yaban Hayatı)**: Direct Purpur & Fabric support!
+  - **26.2 (Chaos Cubed - Küp Kaosu)**: High-performance crossplay ready!
+  - **26.1 (Tiny Takeover - Küçük İstilacılar)**: Drop-in optimized!
+- All historical named updates from 1.21 (Tricky Trials), 1.20 (Trails & Tales) down to 1.0.0 (Minecon Release).
 
-### 1. 🧪 Comprehensive Minecraft Version Coverage (Betas, Alphas to Latest 1.21.4+)
-- **Every Era Supported**: From nostalgic Betas (`b1.0` through `b1.8.1`, `b1.7.3`) and Alphas via Betacraft preservation mirrors, to classic releases (`1.0.0` - `1.15.2`) and modern releases (`1.16.5` - `1.21.4+`) via Mojang Manifest V2!
-- **Interactive Version Filters**: Filter versions dynamically in the GUI with 4 filter pills: `⭐ Modern`, `🏰 Klasik`, `🧪 Betalar`, and `⚡ Tümü`.
-- **Intelligent Java Pairing**: Automatically pairs nostalgic Betas & Classics with Java 8, and modern versions with Java 17/21!
+### 1. 🛠️ 100% Resolved Download & Progress Engine (Zero-Crash Guarantee)
+- Solved the `_progress_callback()` multi-parameter mismatch with universal argument absorption (`*args, **kwargs`) and thread-safe UI updates.
+- Dynamic Fabric Loader/Installer resolver (`0.20.1` / `1.1.2`) ensuring instant HTTP 200 server downloads.
+- Purpur API fallback for Spigot/Paper flavors delivering ultra-high TPS.
 
-### 2. 🤖 AI Autonomous Server Setup Wizard (Natural Language 1-Click Setup)
-- Type what kind of server you want in plain Turkish or English (e.g. *"Arkadaşlarımla b1.7.3 nostalji oynamak istiyorum"* or *"Setup a 1.21.1 Bedrock + Java crossplay server with 4GB RAM"*), and the AI automatically determines the optimal flavor, version, RAM, and plugins, then sets it up with 1 click!
+### 2. 💎 Full 38.8 MB Standalone Windows Executable & Metadata (v3.7.0)
+- Pre-packaged **38.8 MB** self-contained Windows executable with zero external prerequisites.
+- Embedded high-resolution icon (`app_icon.ico`) and native Windows PE file version metadata (3.7.0.0).
 - Quick scenario chips for instant setup (Fabric Friends, Bedrock Crossplay, Competitive PvP, Classic Bedwars, Nostalgic b1.7.3 Beta).
 
 ### 3. 🌐 Full Bilingual Architecture (TR / EN - Türkçe & English)

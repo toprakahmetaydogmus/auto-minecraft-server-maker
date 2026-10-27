@@ -60,7 +60,7 @@ def build():
     ret = subprocess.call(cmd)
     if ret == 0:
         dist_exe = os.path.join("dist", "Auto-Minecraft-Server-Maker.exe")
-        versioned_exe = os.path.join("dist", "Auto-Minecraft-Server-Maker-v3.6.0-Ultra.exe")
+        versioned_exe = os.path.join("dist", "Auto-Minecraft-Server-Maker-v3.7.0-Ultra.exe")
         if os.path.exists(dist_exe):
             shutil.copy2(dist_exe, versioned_exe)
             size_mb = os.path.getsize(dist_exe) / (1024 * 1024)

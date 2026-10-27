@@ -246,29 +246,65 @@ class AIEngineer:
 
         text = prompt_text.lower()
 
-        # 1. Detect Minecraft Version (Betas, Alphas & Releases)
+        # 1. Detect Minecraft Version (2026 Game Drops, Betas, Alphas & Releases)
+        drop_match = re.search(r'\b(26\.[1-4](?:\.\d+)?)\b', text)
         beta_match = re.search(r'\b([ba]1\.\d{1,2}(?:[\._]\d+)?)\b', text)
-        if beta_match:
+        ver_match = re.search(r'\b1\.\d{1,2}(?:\.\d{1,2})?\b', text)
+
+        if drop_match:
+            mc_version = drop_match.group(1)
+        elif beta_match:
             mc_version = beta_match.group(1)
             server_type = "Vanilla"
+        elif ver_match:
+            mc_version = ver_match.group(0)
+        # Named Update Keywords
+        elif any(w in text for w in ["wilderness bound", "yaban hayatı"]):
+            mc_version = "26.3"
+        elif any(w in text for w in ["chaos cubed", "küp kaosu"]):
+            mc_version = "26.2"
+        elif any(w in text for w in ["tiny takeover", "küçük istilacılar"]):
+            mc_version = "26.1"
+        elif any(w in text for w in ["fourth drop", "dördüncü drop"]):
+            mc_version = "26.4"
+        elif any(w in text for w in ["tricky trials", "zorlu denemeler"]):
+            mc_version = "1.21.1"
+        elif any(w in text for w in ["trails & tales", "izler ve hikayeler"]):
+            mc_version = "1.20.4"
+        elif any(w in text for w in ["the wild", "yaban güncellemesi"]):
+            mc_version = "1.19.4"
+        elif any(w in text for w in ["caves & cliffs", "mağaralar ve dağlar"]):
+            mc_version = "1.18.2"
+        elif any(w in text for w in ["nether update", "nether"]):
+            mc_version = "1.16.5"
+        elif any(w in text for w in ["buzzy bees", "vızıldayan arılar"]):
+            mc_version = "1.15.2"
+        elif any(w in text for w in ["village & pillage", "köy ve yağma"]):
+            mc_version = "1.14.4"
+        elif any(w in text for w in ["update aquatic", "sucul güncelleme"]):
+            mc_version = "1.13.2"
+        elif any(w in text for w in ["world of color", "renk dünyası"]):
+            mc_version = "1.12.2"
+        elif any(w in text for w in ["bedwars", "bountiful", "bereketli"]):
+            mc_version = "1.8.9"
+        elif any(w in text for w in ["nostalji", "beta", "golden era"]):
+            mc_version = "b1.7.3"
+        elif any(w in text for w in ["minecon", "ilk tam sürüm"]):
+            mc_version = "1.0.0"
         else:
-            ver_match = re.search(r'\b1\.\d{1,2}(?:\.\d{1,2})?\b', text)
-            if ver_match:
-                mc_version = ver_match.group(0)
+            # Check for legacy versions like 1.8, 1.7, 1.12, 1.20, 1.21
+            legacy_match = re.search(r'\b1\.(\d{1,2})\b', text)
+            if legacy_match:
+                sub = legacy_match.group(1)
+                if sub == "8": mc_version = "1.8.9"
+                elif sub == "7": mc_version = "1.7.10"
+                elif sub == "12": mc_version = "1.12.2"
+                elif sub == "16": mc_version = "1.16.5"
+                elif sub == "20": mc_version = "1.20.4"
+                elif sub == "21": mc_version = "1.21.1"
+                else: mc_version = f"1.{sub}.1"
             else:
-                # Check for legacy versions like 1.8, 1.7, 1.12
-                legacy_match = re.search(r'\b1\.(\d{1,2})\b', text)
-                if legacy_match:
-                    sub = legacy_match.group(1)
-                    if sub == "8": mc_version = "1.8.8"
-                    elif sub == "7": mc_version = "1.7.10"
-                    elif sub == "12": mc_version = "1.12.2"
-                    elif sub == "16": mc_version = "1.16.5"
-                    elif sub == "20": mc_version = "1.20.1"
-                    elif sub == "21": mc_version = "1.21.1"
-                    else: mc_version = f"1.{sub}.1"
-                else:
-                    mc_version = "1.20.4"
+                mc_version = "26.3"
 
         # 2. Detect Server Type / Flavor
         if mc_version.startswith(("b", "a")):

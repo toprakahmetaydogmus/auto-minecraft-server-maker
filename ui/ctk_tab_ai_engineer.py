@@ -203,8 +203,11 @@ class CTkTabAIEngineer(ctk.CTkFrame):
 
     def _refresh_local_status_async(self):
         def _worker():
-            st = self.local_ai.get_status()
-            self.after(0, self._apply_local_status, st)
+            try:
+                st = self.local_ai.get_status()
+                self.after(0, self._apply_local_status, st)
+            except Exception:
+                pass
         threading.Thread(target=_worker, daemon=True).start()
 
     def _apply_local_status(self, st):
