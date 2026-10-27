@@ -36,8 +36,14 @@ Dünyanın en gelişmiş, otonom ve hazır paket odaklı Minecraft Sunucu Yönet
   - `start.bat`: Modern Aikar G1GC bayrakları ve yerel saat dilimi senkronizasyonu (`-Duser.timezone=Europe/Istanbul`)
   - Chunk yükleme baskısı %40 oranında azaltıldı.
 
-#### 4. 🤖 Zenginleştirilmiş Çevrimdışı AI Teşhis Motoru
-- Anti-Xray paket maskeleme, TradeSystem takas GUI penceresi, Geyser UDP 19132 port yönlendirme ve OutOfMemory bellek kurtarma senaryoları çevrimdışı yerel AI veritabanına eklendi. Sıfır token masrafıyla anında kesin Türkçe rehberlik sunar.
+#### 5. 🎓 Sıfır Bilgiyle Başlayanlar İçin İnteraktif Sunucu Akademisi
+- Program ilk kez açıldığında (veya sol menüdeki `🎓 Sıfırdan Başla Rehberi` butonuna basıldığında) açılan 5 adımlı görsel rehber:
+  - **1. Adım:** Sunucu paketi nedir? (Hazır RPG, Crossplay paketlerinin faydaları).
+  - **2. Adım:** Sürüm ve RAM seçimi (Java'yı programın otomatik çözmesi).
+  - **3. Adım:** Eklentiler & Türkçe komutlar (`/hewlp`, `/takas`, `/arsa`, `/para` kitapçığı).
+  - **4. Adım:** Modemle uğraşmadan portsuz tünelle (Playit.gg / Cloudflare) arkadaşlarını davet etme.
+  - **5. Adım:** 24 sekmeli Admin Paneliyle tek tıkla villa yapma, rol dağıtma ve canavar temizleme.
+  - **Hızlı Başlatıcı:** `🚀 İlk Sunucumu Hazırla` butonuna basıldığı an 1.20.1 Paper + Bedrock Crossplay ayarlarını otomatik yükler!
 
 ---
 

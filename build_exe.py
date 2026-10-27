@@ -41,7 +41,6 @@ def build():
         "--name=Auto-Minecraft-Server-Maker",
         "--onefile",
         "--noconsole",
-        "--clean",
         "--icon=app_icon.ico",
         "--version-file=version_info.txt",
         "--collect-all=customtkinter",

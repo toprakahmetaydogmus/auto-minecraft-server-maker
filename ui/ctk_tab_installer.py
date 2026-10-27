@@ -121,11 +121,24 @@ class CTkTabInstaller(ctk.CTkFrame):
         chips_frame = ctk.CTkFrame(ai_box, fg_color="transparent")
         chips_frame.pack(fill="x", padx=10, pady=(0, 8))
 
+        # Sıfır bilgiyle başlayanlar için tutorial chip butonu
+        btn_tutorial = ctk.CTkButton(
+            chips_frame,
+            text="🎓 0 Bilgiyle Başla",
+            font=("Segoe UI", 9, "bold"),
+            height=22,
+            fg_color="#1e1b4b",
+            hover_color=COLOR_ACCENT_PURPLE,
+            text_color=COLOR_ACCENT_CYAN,
+            corner_radius=11,
+            command=self._open_tutorial_from_tab
+        )
+        btn_tutorial.pack(side="left", padx=2, pady=2)
+
         chips = [
             ("👑 Pro RPG & Crossplay", "1.20.1 Arclight crossplay ve 24 eklenti hazır paket kur 3gb ram"),
             ("⚔️ 1.20.1 Büyü & Kılıç", "1.20.1 Forge büyü kılıç modu ve harita kur 6gb ram"),
             ("🗺️ 1.20.4 Fabric Harita & FPS", "1.20.4 hafif Fabric harita ve optimizasyon modları kur 4gb ram"),
-            ("🧟 1.20.1 Zombi Kıyameti", "1.20.1 zombi kıyameti ve hayatta kalma modlu sunucu kur 6gb ram"),
             ("📱 1.21.1 Crossplay", "1.21.1 Bedrock ve Java mobil crossplay Geyser sunucusu kur"),
             ("🔥 26.3 En Son Sürüm", "26.3 Wilderness Bound en son stabil sunucu kur 4GB RAM")
         ]
@@ -536,7 +549,24 @@ class CTkTabInstaller(ctk.CTkFrame):
         mc_ver = self.ver_var.get()
         rec_j = JavaDetector.get_recommended_java_version(mc_ver)
         self.log(f"> Java {rec_j} indirme sayfası açılıyor...")
-        JavaDetector.open_java_download_page(rec_j)
+    def _open_tutorial_from_tab(self):
+        try:
+            from ui.tutorial_modal import TutorialModal
+            modal = TutorialModal(self.winfo_toplevel(), config_manager=self.config_manager, on_quick_start=self._quick_start_from_tutorial)
+            modal.grab_set()
+        except Exception as e:
+            self.log(f"Rehber açma hatası: {e}")
+
+    def _quick_start_from_tutorial(self):
+        self.ver_var.set("1.20.1")
+        self.min_ram_var.set("3")
+        self.max_ram_var.set("4")
+        self.geyser_switch.select()
+        self._select_flavor("PaperMC (Yüksek Performans)", "PaperMC")
+        self._update_java_status()
+        self.log("\n💡 [BAŞLANGIÇ AKADEMİSİ]: Yeni başlayanlar için en iyi ayarlar yüklendi.")
+        self.log("👉 Sürüm: 1.20.1 | Tür: Paper | RAM: 3G-4G | Crossplay: Açık")
+        self.log("👉 Aşağıdaki mavi 'Sunucuyu Kur' butonuna tıklayarak kurulumu başlatabilirsiniz!\n")
 
     def _apply_and_run_ai_chip(self, prompt_text):
         self.ai_prompt_var.set(prompt_text)

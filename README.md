@@ -60,6 +60,11 @@ Designed to run with a rock-solid **20.0 TPS** even on budget hardware or VPS ma
 * **The Root Fix:** OpenJDK 25 removed `sun.misc.Unsafe.ensureClassInitialized`, causing Forge/Arclight 1.20.1 to crash during boot.
 * **Autonomous Resolution:** Auto Minecraft Server Maker detects Java 25 and auto-provisions portable **Adoptium OpenJDK 17** (`tools/java/jre-17/bin/java.exe`), ensuring 100% crash-free server startups.
 
+### 5. 🎓 Zero-Knowledge Interactive Beginner Academy (Sıfırdan Başlayanlar İçin Rehber)
+* **Interactive 5-Step Visual Wizard:** Pops up automatically on first launch (or anytime via the prominent sidebar `🎓 Sıfırdan Başla Rehberi` button).
+* **Demystifying Servers:** Explains Turn-key Presets, Java version matching, Portless Global Tunnels (Playit.gg / Cloudflare), and Admin Panel controls in plain language.
+* **1-Click Quick Launcher:** Beginners can click `🚀 İlk Sunucumu Hazırla` to automatically populate the gold standard (1.20.1 Paper, 3GB RAM, Bedrock Crossplay) and immediately start playing with friends.
+
 ---
 
 ## 🚀 Quick Start

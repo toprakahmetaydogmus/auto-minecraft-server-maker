@@ -94,6 +94,7 @@ from ui.ctk_tab_properties import CTkTabProperties
 from ui.ctk_tab_backup import CTkTabBackup
 from ui.ctk_tab_admin_panel import CTkTabAdminPanel
 from ui.ctk_tab_settings import CTkTabSettings
+from ui.tutorial_modal import TutorialModal
 
 # Configure CustomTkinter Global Theme
 ctk.set_appearance_mode("Dark")
@@ -131,6 +132,9 @@ class AutoMinecraftServerMakerApp(ctk.CTk):
 
         self._build_layout()
         self._start_background_workers()
+
+        # İlk açılışta sıfır bilgiye sahip kullanıcılar için tutorial modalini aç
+        self.after(600, self._check_show_tutorial)
 
     def _build_layout(self):
         # Ana Izgara: Sol Sidebar (270px) + Sağ İçerik Alanı
@@ -183,7 +187,7 @@ class AutoMinecraftServerMakerApp(ctk.CTk):
 
         ctk.CTkLabel(
             logo_f,
-            text="v3.9.0 ULTIMATE • AI Autonomous & Global Multi-Engine",
+            text="v4.1.0 MASTER • 1-Click Presets & 24 Tabs Admin",
             font=FONT_SMALL,
             text_color=COLOR_ACCENT_GREEN,
             anchor="w"
@@ -199,7 +203,23 @@ class AutoMinecraftServerMakerApp(ctk.CTk):
             corner_radius=6,
             height=32
         )
-        self.status_badge.pack(fill="x", padx=14, pady=(0, 12))
+        self.status_badge.pack(fill="x", padx=14, pady=(0, 6))
+
+        # 🎓 Sıfırdan Başla Rehberi (Tutorial) Butonu
+        self.btn_tutorial = ctk.CTkButton(
+            self.sidebar,
+            text="🎓 Sıfırdan Başla Rehberi",
+            font=("Segoe UI", 11, "bold"),
+            height=32,
+            corner_radius=6,
+            fg_color="#1e1b4b",
+            hover_color=COLOR_ACCENT_PURPLE,
+            text_color=COLOR_ACCENT_CYAN,
+            border_width=1,
+            border_color=COLOR_ACCENT_PURPLE,
+            command=self.open_tutorial
+        )
+        self.btn_tutorial.pack(fill="x", padx=14, pady=(0, 12))
 
         # Navigasyon Butonları & Kategorileri
         self.nav_btns = {}
@@ -307,6 +327,41 @@ class AutoMinecraftServerMakerApp(ctk.CTk):
     def _show_backup(self): self._switch_tab("backup")
     def _show_admin(self): self._switch_tab("admin")
     def _show_settings(self): self._switch_tab("settings")
+
+    def _check_show_tutorial(self):
+        try:
+            s_cfg = self.config_manager.get_server_config()
+            if s_cfg.get("show_welcome_tutorial", True):
+                self.open_tutorial()
+        except Exception:
+            pass
+
+    def open_tutorial(self):
+        def _on_quick_start():
+            self._show_installer()
+            if "installer" in self.tabs:
+                inst = self.tabs["installer"]
+                if hasattr(inst, "ver_var"):
+                    inst.ver_var.set("1.20.1")
+                if hasattr(inst, "min_ram_var"):
+                    inst.min_ram_var.set("3")
+                if hasattr(inst, "max_ram_var"):
+                    inst.max_ram_var.set("4")
+                if hasattr(inst, "geyser_switch"):
+                    inst.geyser_switch.select()
+                if hasattr(inst, "_select_flavor"):
+                    inst._select_flavor("PaperMC (Yüksek Performans)", "PaperMC")
+                if hasattr(inst, "_update_java_status"):
+                    inst._update_java_status()
+                inst.log("\n💡 [BAŞLANGIÇ AKADEMİSİ]: Yeni başlayanlar için en iyi ayarlar yüklendi.")
+                inst.log("👉 Sürüm: 1.20.1 | Tür: Paper | RAM: 3G-4G | Crossplay: Açık")
+                inst.log("👉 Aşağıdaki mavi 'Sunucuyu Kur' butonuna tıklayarak kurulumu başlatabilirsiniz!\n")
+
+        try:
+            modal = TutorialModal(self, config_manager=self.config_manager, on_quick_start=_on_quick_start)
+            modal.grab_set()
+        except Exception as e:
+            print(f"Tutorial modal açma hatası: {e}")
 
     def _start_background_workers(self):
         # 1. LAN Broadcaster (Yerel ağ ve VPN - Radmin/Hamachi otomatik yayın)

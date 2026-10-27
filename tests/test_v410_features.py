@@ -194,6 +194,25 @@ class TestV410Features(unittest.TestCase):
         self.assertIn("1.8.9 (Bountiful Update)", pvp_vers)
         self.assertIn("1.7.10 (The Update that Changed the World)", pvp_vers)
 
+    def test_tutorial_structure_and_steps(self):
+        """Validates that the beginner tutorial contains 5 comprehensive steps and zero-leak privacy."""
+        from ui.tutorial_modal import TUTORIAL_STEPS
+        self.assertEqual(len(TUTORIAL_STEPS), 5)
+        for s in TUTORIAL_STEPS:
+            self.assertIn("step", s)
+            self.assertIn("badge", s)
+            self.assertIn("icon", s)
+            self.assertIn("title", s)
+            self.assertIn("subtitle", s)
+            self.assertIn("desc", s)
+            self.assertIn("bullets", s)
+            self.assertIn("tip", s)
+            self.assertGreaterEqual(len(s["bullets"]), 3)
+            # Privacy assertion
+            full_text = f"{s['title']} {s['desc']} {s['tip']}".lower()
+            for forbidden in ["192.168.", "10.0.", "26.92.", "mirkundaklayan"]:
+                self.assertNotIn(forbidden, full_text)
+
 
 if __name__ == "__main__":
     unittest.main()
