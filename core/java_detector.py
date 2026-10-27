@@ -116,3 +116,20 @@ class JavaDetector:
         except Exception:
             pass
         return 17
+
+    @staticmethod
+    def get_java_download_url(version=21):
+        """Returns direct official Eclipse Adoptium Temurin MSI installer URL for Windows x64."""
+        if version == 21:
+            return "https://api.adoptium.net/v3/installer/latest/21/ga/windows/x64/jdk/hotspot/normal/eclipse"
+        elif version == 17:
+            return "https://api.adoptium.net/v3/installer/latest/17/ga/windows/x64/jdk/hotspot/normal/eclipse"
+        elif version == 8:
+            return "https://api.adoptium.net/v3/installer/latest/8/ga/windows/x64/jdk/hotspot/normal/eclipse"
+        return "https://adoptium.net/temurin/releases/"
+
+    @staticmethod
+    def open_java_download_page(version=21):
+        import webbrowser
+        url = JavaDetector.get_java_download_url(version)
+        webbrowser.open(url)

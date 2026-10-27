@@ -129,7 +129,7 @@ class AutoMinecraftServerMakerApp(ctk.CTk):
 
         ctk.CTkLabel(
             logo_f,
-            text="⚡ SERVER MAKER PRO",
+            text="⚡ AUTO MINECRAFT",
             font=FONT_TITLE,
             text_color=COLOR_ACCENT_CYAN,
             anchor="w"
@@ -137,9 +137,17 @@ class AutoMinecraftServerMakerApp(ctk.CTk):
 
         ctk.CTkLabel(
             logo_f,
-            text="v3.2.0 Ultra Edition • 100% Zero-Leak",
+            text="SERVER MAKER PRO",
+            font=("Segoe UI", 12, "bold"),
+            text_color=COLOR_TEXT_MAIN,
+            anchor="w"
+        ).pack(anchor="w")
+
+        ctk.CTkLabel(
+            logo_f,
+            text="v3.2.0 ULTRA • Tek tıkla. Sıfır dert.",
             font=FONT_SMALL,
-            text_color=COLOR_TEXT_MUTED,
+            text_color=COLOR_ACCENT_GREEN,
             anchor="w"
         ).pack(anchor="w")
 
@@ -169,7 +177,7 @@ class AutoMinecraftServerMakerApp(ctk.CTk):
                 ("backup", "💾 Dünya & Yedekleme", self._show_backup),
             ]),
             ("🧠 YAPAY ZEKA & AYARLAR", [
-                ("ai", "🤖 AI Mühendisi & Teşhis", self._show_ai),
+                ("ai", "🩺 AI Çökme Doktoru & Mühendis", self._show_ai),
                 ("settings", "🔑 API Kasası & Ayarlar", self._show_settings)
             ])
         ]

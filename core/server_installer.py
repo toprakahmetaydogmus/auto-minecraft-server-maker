@@ -16,21 +16,28 @@ import urllib.request
 import logging
 
 class ServerInstaller:
-    def __init__(self, target_dir, log_callback=None):
+    def __init__(self, target_dir, log_callback=None, progress_callback=None):
         self.target_dir = os.path.abspath(target_dir)
         self.log_callback = log_callback or print
+        self.progress_callback = progress_callback
 
     def log(self, message):
-        self.log_callback(f"[*] {message}")
+        self.log_callback(f"{message}")
 
     def setup_server(self, server_type, mc_version, min_ram=4, max_ram=6, rcon_port=25575, rcon_pass="admin123", server_port=25565, bedrock_port=19132, install_geyser=True):
         os.makedirs(self.target_dir, exist_ok=True)
-        self.log(f"Sunucu kurulumu başlatılıyor: {server_type} ({mc_version})...")
+        self.log(f"> Kurulum başlatılıyor: {server_type} {mc_version}...")
+
+        from core.java_detector import JavaDetector
+        sys_j = JavaDetector.get_system_java()
+        j_ver = sys_j['version'] if sys_j and sys_j['version'] > 0 else 17
+        self.log(f"> Java {j_ver} algılandı ✔")
 
         jar_filename = f"{server_type.lower()}-{mc_version}.jar"
         jar_path = os.path.join(self.target_dir, jar_filename)
 
         # 1. Primary Download Attempt
+        self.log(f"> {server_type} {mc_version} indiriliyor...")
         success = self._download_jar(server_type, mc_version, jar_path)
 
         # 2. Multi-tier Autonomous Mirror Fallback
@@ -64,22 +71,24 @@ class ServerInstaller:
         eula_path = os.path.join(self.target_dir, "eula.txt")
         with open(eula_path, "w", encoding="utf-8") as f:
             f.write("# Otomatik kabul edilmis Minecraft EULA\neula=true\n")
-        self.log("EULA otomatik olarak kabul edildi (eula=true).")
+        self.log("> EULA onaylandı ✔")
 
         # server.properties
         self._write_server_properties(server_port, rcon_port, rcon_pass)
-        self.log(f"server.properties yapılandırıldı (Port: {server_port}, RCON: {rcon_port}).")
+        self.log("> server.properties üretildi ✔")
 
         # start.bat
         self._write_start_script(jar_filename, min_ram, max_ram)
-        self.log(f"start.bat optimize Aikar G1GC bayrakları ile oluşturuldu ({min_ram}G - {max_ram}G).")
+        self.log(f"> start.bat optimize edildi (Aikar G1GC Flags: {min_ram}G-{max_ram}G) ✔")
 
-        # Geyser Crossplay (Bedrock Support)
+        # Geyser + Floodgate Crossplay (Bedrock Support)
         if install_geyser and any(k in server_type.lower() for k in ["paper", "purpur", "arclight", "spigot", "mohist"]):
             self._install_geyser_plugin()
+            self._install_floodgate_plugin()
+            self.log("> Mobil & Konsol Crossplay (Geyser + Floodgate) yapılandırıldı ✔")
 
         self.log("======================================================")
-        self.log(f"✅ SUNUCU HAZIR! Konum: {self.target_dir}")
+        self.log(f"✅ SUNUCU ÇALIŞMAYA HAZIR! Konum: {self.target_dir}")
         self.log("======================================================")
         return True
 
@@ -244,13 +253,26 @@ class ServerInstaller:
         os.makedirs(plugins_dir, exist_ok=True)
         geyser_path = os.path.join(plugins_dir, "Geyser-Spigot.jar")
         if not os.path.exists(geyser_path):
-            self.log("Geyser (Bedrock Crossplay) eklentisi indiriliyor...")
+            self.log("> Geyser (Bedrock Crossplay) eklentisi indiriliyor...")
             try:
                 url = "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot"
                 self._download_file(url, geyser_path)
-                self.log("Geyser eklentisi plugins klasörüne başarıyla kuruldu.")
+                self.log("> Geyser eklentisi plugins klasörüne kuruldu ✔")
             except Exception as e:
-                self.log(f"Geyser indirme uyarısı (İsteğe bağlı): {e}")
+                self.log(f"Geyser indirme uyarısı: {e}")
+
+    def _install_floodgate_plugin(self):
+        plugins_dir = os.path.join(self.target_dir, "plugins")
+        os.makedirs(plugins_dir, exist_ok=True)
+        fg_path = os.path.join(plugins_dir, "Floodgate-Spigot.jar")
+        if not os.path.exists(fg_path):
+            self.log("> Floodgate (Şifresiz Bedrock Girişi) eklentisi indiriliyor...")
+            try:
+                url = "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot"
+                self._download_file(url, fg_path)
+                self.log("> Floodgate eklentisi plugins klasörüne kuruldu ✔")
+            except Exception as e:
+                self.log(f"Floodgate indirme uyarısı: {e}")
 
     def _download_file(self, url, dest_path):
         req = urllib.request.Request(url, headers={"User-Agent": "AutoMinecraftServerMaker/1.0"})
@@ -263,9 +285,15 @@ class ServerInstaller:
                     break
                 out.write(chunk)
                 downloaded += len(chunk)
-                if total_size > 0 and downloaded % (1024 * 1024 * 5) < 65536:
+                if total_size > 0:
                     pct = int(downloaded / total_size * 100)
-                    self.log(f"İndiriliyor: %{pct} ({downloaded // (1024*1024)} MB)")
+                    if self.progress_callback:
+                        self.progress_callback(pct, downloaded, total_size)
+                    if downloaded % (1024 * 1024 * 5) < 65536:
+                        self.log(f"İndiriliyor: %{pct} ({downloaded // (1024*1024)} MB)")
+                else:
+                    if self.progress_callback:
+                        self.progress_callback(50, downloaded, 0)
 
     def _write_server_properties(self, server_port, rcon_port, rcon_pass):
         props_path = os.path.join(self.target_dir, "server.properties")
